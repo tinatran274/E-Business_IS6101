@@ -1,0 +1,9 @@
+*.env
+
+vendor
+postgres_data*
+
+bin
+
+.vscode
+.idea
