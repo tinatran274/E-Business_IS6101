@@ -22,4 +22,5 @@ func (r *AuthRouter) Register(e *echo.Group) {
 	authRoute := e.Group("/auth")
 
 	authRoute.POST("/sign-up", r.authHandler.SignUp)
+	authRoute.POST("/sign-in", r.authHandler.SignIn)
 }

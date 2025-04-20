@@ -1,24 +1,24 @@
-package user_actions
+package actions
 
 import (
 	"context"
 
 	"github.com/google/uuid"
 
-	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/models"
-	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/services"
+	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/usecases"
+	"10.0.0.50/tuan.quang.tran/aioz-ads/models"
 )
 
 type GetMeAction struct {
-	userService services.UserService
+	userUseCase usecases.UserUseCase
 }
 
-func NewGetMeAction(userService services.UserService) *GetMeAction {
+func NewGetMeAction(userUseCase usecases.UserUseCase) *GetMeAction {
 	return &GetMeAction{
-		userService: userService,
+		userUseCase: userUseCase,
 	}
 }
 
 func (a *GetMeAction) Exec(ctx context.Context, id uuid.UUID) (*models.User, error) {
-	return a.userService.GetMe(ctx, id)
+	return a.userUseCase.GetMe(ctx, id)
 }

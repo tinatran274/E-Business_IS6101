@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/models"
+	db "10.0.0.50/tuan.quang.tran/aioz-ads/db/generated"
 	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/utils/metrics"
-	"10.0.0.50/tuan.quang.tran/aioz-ads/pkg/v1/db"
+	"10.0.0.50/tuan.quang.tran/aioz-ads/models"
 )
 
 type UserRepository struct {
@@ -50,6 +50,51 @@ func (r *UserRepository) GetUserById(
 	}
 
 	return models.ToUser(user), nil
+}
+
+func (r *UserRepository) GetAllUser(
+	ctx context.Context) ([]*models.User, error) {
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.DbSum.WithLabelValues("GetAllUser").
+			Observe(time.Since(t).Seconds())
+	}()
+
+	rows, err := r.q.GetAllUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userList := make([]*models.User, 0, len(rows))
+	for i := range rows {
+		user := models.ToUser(rows[i])
+		userList = append(userList, user)
+	}
+
+	return userList, nil
+}
+
+func (r *UserRepository) CreateUser(
+	ctx context.Context,
+	user *models.User,
+) error {
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.DbSum.WithLabelValues("CreateUser").
+			Observe(time.Since(t).Seconds())
+	}()
+
+	params := db.CreateUserParams{
+		ID:     user.ID,
+		Status: "active",
+	}
+
+	err := r.q.CreateUser(ctx, params)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *UserRepository) UpdateUser(

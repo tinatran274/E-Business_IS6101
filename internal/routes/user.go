@@ -26,7 +26,11 @@ func NewUserRouter(
 
 func (r *UserRouter) Register(e *echo.Group) {
 	userRoute := e.Group("/user")
-	userRoute.Use(r.authMiddleware)
+	if r.authMiddleware != nil {
+		userRoute.Use(r.authMiddleware)
+	}
 
-	e.GET("/me", r.userHandler.GetMe)
+	userRoute.GET("/me", r.userHandler.GetMe)
+	userRoute.GET("", r.userHandler.GetAll)
+	userRoute.GET("/:id", r.userHandler.GetByID)
 }

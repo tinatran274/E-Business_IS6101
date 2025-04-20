@@ -16,6 +16,7 @@ func NewCron() *Cron {
 
 func (c *Cron) Start() {
 	if _, err := c.cron.AddFunc("0 0 0 1 * *", func() {
+
 	}); err != nil {
 		panic(err)
 	}

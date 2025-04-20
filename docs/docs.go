@@ -24,6 +24,53 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/sign-in": {
+            "post": {
+                "description": "sign in user",
+                "consumes": [
+                    "application/json",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Sign in",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/sign-up": {
             "post": {
                 "description": "sign up new user",
@@ -40,12 +87,12 @@ const docTemplate = `{
                 "summary": "Sign up",
                 "parameters": [
                     {
-                        "description": "create org input",
+                        "description": "input",
                         "name": "payload",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.CreateUserRequest"
+                            "$ref": "#/definitions/handlers.RegisterRequest"
                         }
                     }
                 ],
@@ -58,6 +105,36 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "description": "get all user",
+                "consumes": [
+                    "application/json",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all",
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.GeneralResponse"
                         }
@@ -97,7 +174,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/response.GeneralResponse"
                         }
                     },
                     "400": {
@@ -114,16 +191,67 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/{id}": {
+            "get": {
+                "description": "Get a user by their ID",
+                "consumes": [
+                    "application/json",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "handlers.CreateUserRequest": {
+        "handlers.RegisterRequest": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "username": {
+                "password": {
                     "type": "string"
                 }
             }
@@ -131,6 +259,12 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "aim": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -143,14 +277,17 @@ const docTemplate = `{
                 "deleted_by": {
                     "type": "string"
                 },
-                "display_email": {
-                    "type": "string"
-                },
-                "email": {
+                "exercise_level": {
                     "type": "string"
                 },
                 "first_name": {
                     "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "string"
@@ -169,6 +306,9 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                },
+                "weight": {
+                    "type": "integer"
                 }
             }
         },
