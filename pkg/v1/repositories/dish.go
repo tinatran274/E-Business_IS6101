@@ -40,8 +40,20 @@ func (r *DishRepository) GetDishByID(
 		return nil, err
 	}
 
+	ingredients, err := r.db.GetIngredientByDishId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	ingredientModels := make([]models.Ingredient, len(ingredients))
+	for i, ing := range ingredients {
+		ingredientModels[i] = *models.ToIngredient(ing)
+	}
+
 	dishModel := models.ToDish(dish)
 	dishModel.Category = *models.ToCategory(category)
+	dishModel.Ingredients = ingredientModels
+	dishModel = dishModel.CalculateNutritionalValues()
 	return dishModel, nil
 }
 
@@ -76,6 +88,18 @@ func (r *DishRepository) GetDishes(
 		}
 
 		result[i].Category = *models.ToCategory(category)
+		ingredients, err := r.db.GetIngredientByDishId(ctx, dish.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		ingredientModel := make([]models.Ingredient, len(ingredients))
+		for i, ing := range ingredients {
+			ingredientModel[i] = *models.ToIngredient(ing)
+		}
+
+		result[i].Ingredients = ingredientModel
+		result[i] = result[i].CalculateNutritionalValues()
 	}
 
 	return result, nil

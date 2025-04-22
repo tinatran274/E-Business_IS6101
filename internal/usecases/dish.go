@@ -10,4 +10,14 @@ import (
 type DishUseCase interface {
 	GetDishByID(ctx context.Context, id uuid.UUID) (*models.Dish, error)
 	GetDishes(ctx context.Context, filter models.FilterParams) ([]*models.Dish, int, error)
+	LikeDish(
+		ctx context.Context,
+		dishId uuid.UUID,
+		authInfo models.AuthenticationInfo,
+	) error
+	UnlikeDish(
+		ctx context.Context,
+		dishId uuid.UUID,
+		authInfo models.AuthenticationInfo,
+	) error
 }

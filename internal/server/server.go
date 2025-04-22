@@ -58,11 +58,12 @@ func (s *Server) Start() {
 	accountRepo := repositories.NewAccountRepository(q)
 	ingredientRepo := repositories.NewIngredientRepository(q)
 	dishRepo := repositories.NewDishRepository(q)
+	favoriteRepo := repositories.NewFavoriteRepository(q)
 
 	userUseCase := usecases.NewUserUseCase(userRepo, accountRepo)
 	authUseCase := usecases.NewAuthUseCase(accountRepo, userRepo)
 	ingredientUseCase := usecases.NewIngredientUseCase(ingredientRepo)
-	dishUseCase := usecases.NewDishUseCase(dishRepo)
+	dishUseCase := usecases.NewDishUseCase(dishRepo, favoriteRepo)
 
 	authHandler := handlers.NewAuthHandler(userUseCase, authUseCase)
 	userHandler := handlers.NewUserHanlder(userUseCase)

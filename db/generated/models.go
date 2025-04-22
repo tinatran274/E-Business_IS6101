@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Account struct {
@@ -51,6 +52,12 @@ type Dish struct {
 	DeletedBy   *uuid.UUID `json:"deleted_by"`
 }
 
+type Favorite struct {
+	DishID uuid.UUID `json:"dish_id"`
+	UserID uuid.UUID `json:"user_id"`
+	Value  int32     `json:"value"`
+}
+
 type Ingredient struct {
 	ID          uuid.UUID  `json:"id"`
 	Name        string     `json:"name"`
@@ -83,6 +90,16 @@ type Recipe struct {
 	DishID       uuid.UUID `json:"dish_id"`
 	IngredientID uuid.UUID `json:"ingredient_id"`
 	Unit         float64   `json:"unit"`
+}
+
+type Statistic struct {
+	UpdatedAt        pgtype.Date `json:"updated_at"`
+	UserID           uuid.UUID   `json:"user_id"`
+	MorningCalories  float64     `json:"morning_calories"`
+	LunchCalories    float64     `json:"lunch_calories"`
+	DinnerCalories   float64     `json:"dinner_calories"`
+	SnackCalories    float64     `json:"snack_calories"`
+	ExerciseCalories float64     `json:"exercise_calories"`
 }
 
 type User struct {

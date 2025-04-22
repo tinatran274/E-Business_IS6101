@@ -98,3 +98,32 @@ func (r *IngredientRepository) CountIngredients(
 
 	return int(count), nil
 }
+
+func (r *IngredientRepository) GetIngredientByDishId(
+	ctx context.Context,
+	dishID uuid.UUID,
+) ([]*models.Ingredient, error) {
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.DbSum.WithLabelValues("GetIngredientByDishId").
+			Observe(time.Since(t).Seconds())
+	}()
+
+	ingredients, err := r.db.GetIngredientByDishId(ctx, dishID)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*models.Ingredient, len(ingredients))
+	for i, ingredient := range ingredients {
+		result[i] = models.ToIngredient(ingredient)
+		category, err := r.db.GetCategoryById(ctx, ingredient.CategoryID)
+		if err != nil {
+			return nil, err
+		}
+
+		result[i].Category = *models.ToCategory(category)
+	}
+
+	return result, nil
+}

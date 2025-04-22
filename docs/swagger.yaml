@@ -234,6 +234,78 @@ paths:
       summary: Get dish by ID
       tags:
       - dish
+  /dish/{id}/like:
+    post:
+      consumes:
+      - application/json
+      description: Like an dish
+      parameters:
+      - description: Dish ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Like dish
+      tags:
+      - dish
+  /dish/{id}/unlike:
+    post:
+      consumes:
+      - application/json
+      description: Unlike an dish
+      parameters:
+      - description: Dish ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Unlike dish
+      tags:
+      - dish
   /ingredient:
     get:
       consumes:

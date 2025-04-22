@@ -10,12 +10,17 @@ import (
 )
 
 type DishUseCase struct {
-	dishRepo models.DishRepository
+	dishRepo     models.DishRepository
+	favoriteRepo models.FavoriteRepository
 }
 
-func NewDishUseCase(dishRepo models.DishRepository) *DishUseCase {
+func NewDishUseCase(
+	dishRepo models.DishRepository,
+	favoriteRepo models.FavoriteRepository,
+) *DishUseCase {
 	return &DishUseCase{
-		dishRepo: dishRepo,
+		dishRepo:     dishRepo,
+		favoriteRepo: favoriteRepo,
 	}
 }
 
@@ -49,4 +54,102 @@ func (s *DishUseCase) GetDishes(
 	}
 
 	return dishes, total, nil
+}
+
+func (s *DishUseCase) LikeDish(
+	ctx context.Context,
+	dishId uuid.UUID,
+	authInfo models.AuthenticationInfo,
+) error {
+	dish, err := s.dishRepo.GetDishByID(ctx, dishId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return response.NewNotFoundError("Dish not found.")
+		}
+
+		return response.NewInternalServerError(err)
+	}
+
+	existingFavorite, err := s.favoriteRepo.GetFavoriteByUserIdAndDishId(
+		ctx,
+		authInfo.User.ID,
+		dish.ID,
+	)
+	if err != nil && err != pgx.ErrNoRows {
+		return response.NewInternalServerError(err)
+	}
+
+	if existingFavorite == nil {
+		favorite := &models.Favorite{
+			UserID: authInfo.User.ID,
+			DishID: dishId,
+			Value:  1,
+		}
+		_, err = s.favoriteRepo.CreateFavorite(ctx, favorite)
+		if err != nil {
+			return response.NewInternalServerError(err)
+		}
+
+		return nil
+	}
+
+	if existingFavorite.Value == 1 {
+		return response.NewBadRequestError("Dish already liked.")
+	}
+
+	favorite := &models.Favorite{
+		UserID: authInfo.User.ID,
+		DishID: dish.ID,
+		Value:  1,
+	}
+	_, err = s.favoriteRepo.UpdateFavorite(ctx, favorite)
+	if err != nil {
+		return response.NewInternalServerError(err)
+	}
+
+	return nil
+}
+
+func (s *DishUseCase) UnlikeDish(
+	ctx context.Context,
+	dishId uuid.UUID,
+	authInfo models.AuthenticationInfo,
+) error {
+	dish, err := s.dishRepo.GetDishByID(ctx, dishId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return response.NewNotFoundError("Dish not found.")
+		}
+
+		return response.NewInternalServerError(err)
+	}
+
+	existingFavorite, err := s.favoriteRepo.GetFavoriteByUserIdAndDishId(
+		ctx,
+		authInfo.User.ID,
+		dish.ID,
+	)
+	if err != nil && err != pgx.ErrNoRows {
+		return response.NewInternalServerError(err)
+	}
+
+	if existingFavorite == nil {
+		return response.NewBadRequestError("Dish not liked yet.")
+	}
+
+	if existingFavorite.Value == 0 {
+		return response.NewBadRequestError("Dish already unliked.")
+	}
+
+	favorite := &models.Favorite{
+		UserID: authInfo.User.ID,
+		DishID: dish.ID,
+		Value:  0,
+	}
+	_, err = s.favoriteRepo.UpdateFavorite(ctx, favorite)
+	if err != nil {
+		return response.NewInternalServerError(err)
+	}
+
+	return nil
 }

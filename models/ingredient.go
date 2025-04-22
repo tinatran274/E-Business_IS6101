@@ -21,6 +21,10 @@ type IngredientRepository interface {
 		ctx context.Context,
 		filter FilterParams,
 	) (int, error)
+	GetIngredientByDishId(
+		ctx context.Context,
+		dishID uuid.UUID,
+	) ([]*Ingredient, error)
 }
 
 type Ingredient struct {
