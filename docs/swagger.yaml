@@ -7,6 +7,27 @@ definitions:
       password:
         type: string
     type: object
+  models.UpdateUserRequest:
+    properties:
+      age:
+        type: integer
+      aim:
+        type: string
+      exercise_level:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      height:
+        type: integer
+      last_name:
+        type: string
+      username:
+        type: string
+      weight:
+        type: integer
+    type: object
   models.User:
     properties:
       age:
@@ -130,6 +151,89 @@ paths:
       summary: Sign up
       tags:
       - auth
+  /ingredient:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of ingredients with filtering and sorting
+      parameters:
+      - description: Limit (1-100), default is 25
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Search keyword for name
+        in: query
+        name: keyword
+        type: string
+      - description: 'Sort direction: asc or desc'
+        in: query
+        name: sort_by
+        type: string
+      - description: 'Field to sort by, allowed: updated_at'
+        in: query
+        name: order_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get ingredients
+      tags:
+      - ingredients
+  /ingredient/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an ingredient by its ID
+      parameters:
+      - description: Ingredient ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get ingredient by ID
+      tags:
+      - ingredients
   /user:
     get:
       consumes:
@@ -147,6 +251,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
       summary: Get all
       tags:
       - users
@@ -181,7 +288,52 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
       summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      - application/x-www-form-urlencoded
+      description: Update a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Update user
       tags:
       - users
   /user/me:

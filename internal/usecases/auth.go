@@ -2,7 +2,7 @@ package usecases
 
 import "context"
 
-type AccountUseCase interface {
+type AuthUseCase interface {
 	SignIn(
 		ctx context.Context,
 		email, password string,

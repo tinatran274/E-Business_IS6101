@@ -19,6 +19,8 @@ type AppConfig struct {
 	Addr     string `mapstructure:"REDIS_ADDR"`
 	Password string `mapstructure:"REDIS_PASSWORD"`
 	DB       int    `mapstructure:"REDIS_DB"`
+
+	JwtSecret string `mapstructure:"JWT_SECRET_KEY"`
 }
 
 func MustNewAppConfig(filePath string) *AppConfig {

@@ -3,7 +3,7 @@ SELECT *
 FROM categories
 WHERE id = $1 AND status != 'deleted';
 
--- name: GetAllCategory :one
+-- name: GetCategories :many
 SELECT *
 FROM categories 
 WHERE status != 'deleted';

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"time"
 
 	db "10.0.0.50/tuan.quang.tran/aioz-ads/db/generated"
@@ -8,6 +9,13 @@ import (
 )
 
 type CategoryRepository interface {
+	GetCategories(
+		ctx context.Context,
+	) ([]*Category, error)
+	GetCategoryByID(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*Category, error)
 }
 
 type Category struct {

@@ -73,28 +73,41 @@ func (q *Queries) DeleteCategory(ctx context.Context, arg DeleteCategoryParams) 
 	return err
 }
 
-const getAllCategory = `-- name: GetAllCategory :one
+const getCategories = `-- name: GetCategories :many
 SELECT id, name, description, status, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 FROM categories 
 WHERE status != 'deleted'
 `
 
-func (q *Queries) GetAllCategory(ctx context.Context) (Category, error) {
-	row := q.db.QueryRow(ctx, getAllCategory)
-	var i Category
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.Status,
-		&i.CreatedAt,
-		&i.CreatedBy,
-		&i.UpdatedAt,
-		&i.UpdatedBy,
-		&i.DeletedAt,
-		&i.DeletedBy,
-	)
-	return i, err
+func (q *Queries) GetCategories(ctx context.Context) ([]Category, error) {
+	rows, err := q.db.Query(ctx, getCategories)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Category
+	for rows.Next() {
+		var i Category
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Status,
+			&i.CreatedAt,
+			&i.CreatedBy,
+			&i.UpdatedAt,
+			&i.UpdatedBy,
+			&i.DeletedAt,
+			&i.DeletedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getCategoryById = `-- name: GetCategoryById :one

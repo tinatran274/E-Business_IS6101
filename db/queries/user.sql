@@ -15,6 +15,13 @@ JOIN accounts ON users.id = accounts.user_id
 WHERE accounts.email = $1 AND users.status != 'deleted'
   AND accounts.status != 'deleted';
 
+-- name: GetUserByAccountId :one
+SELECT users.*
+FROM users
+JOIN accounts ON users.id = accounts.user_id
+WHERE accounts.id = $1 AND users.status != 'deleted'
+  AND accounts.status != 'deleted';
+
 -- name: CreateUser :exec
 INSERT INTO users (
   id, 

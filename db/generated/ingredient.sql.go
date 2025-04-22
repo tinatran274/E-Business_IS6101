@@ -12,6 +12,18 @@ import (
 	"github.com/google/uuid"
 )
 
+const countIngredients = `-- name: CountIngredients :one
+SELECT COUNT(*) FROM ingredients
+WHERE status != 'deleted'
+`
+
+func (q *Queries) CountIngredients(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countIngredients)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createIngredient = `-- name: CreateIngredient :exec
 INSERT INTO ingredients (
   id, 
@@ -118,45 +130,6 @@ func (q *Queries) DeleteIngredient(ctx context.Context, arg DeleteIngredientPara
 	return err
 }
 
-const getAllIngredient = `-- name: GetAllIngredient :one
-SELECT id, name, description, removal, kcal, protein, lipits, glucids, canxi, phosphor, fe, vitamin_a, vitamin_b1, vitamin_b2, vitamin_c, vitamin_pp, beta_caroten, category_id, status, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
-FROM ingredients 
-WHERE status != 'deleted'
-`
-
-func (q *Queries) GetAllIngredient(ctx context.Context) (Ingredient, error) {
-	row := q.db.QueryRow(ctx, getAllIngredient)
-	var i Ingredient
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.Removal,
-		&i.Kcal,
-		&i.Protein,
-		&i.Lipits,
-		&i.Glucids,
-		&i.Canxi,
-		&i.Phosphor,
-		&i.Fe,
-		&i.VitaminA,
-		&i.VitaminB1,
-		&i.VitaminB2,
-		&i.VitaminC,
-		&i.VitaminPp,
-		&i.BetaCaroten,
-		&i.CategoryID,
-		&i.Status,
-		&i.CreatedAt,
-		&i.CreatedBy,
-		&i.UpdatedAt,
-		&i.UpdatedBy,
-		&i.DeletedAt,
-		&i.DeletedBy,
-	)
-	return i, err
-}
-
 const getIngredientByDishId = `-- name: GetIngredientByDishId :many
 SELECT i.id, i.name, i.description, i.removal, i.kcal, i.protein, i.lipits, i.glucids, i.canxi, i.phosphor, i.fe, i.vitamin_a, i.vitamin_b1, i.vitamin_b2, i.vitamin_c, i.vitamin_pp, i.beta_caroten, i.category_id, i.status, i.created_at, i.created_by, i.updated_at, i.updated_by, i.deleted_at, i.deleted_by 
 FROM ingredients i
@@ -247,6 +220,87 @@ func (q *Queries) GetIngredientById(ctx context.Context, id uuid.UUID) (Ingredie
 		&i.DeletedBy,
 	)
 	return i, err
+}
+
+const getIngredients = `-- name: GetIngredients :many
+SELECT l.id, l.name, l.description, l.removal, l.kcal, l.protein, l.lipits, l.glucids, l.canxi, l.phosphor, l.fe, l.vitamin_a, l.vitamin_b1, l.vitamin_b2, l.vitamin_c, l.vitamin_pp, l.beta_caroten, l.category_id, l.status, l.created_at, l.created_by, l.updated_at, l.updated_by, l.deleted_at, l.deleted_by
+FROM ingredients l
+WHERE ($3::text = '' or l.name ilike concat('%',$3::text,'%'))
+ORDER BY
+    CASE 
+        WHEN $4::text = 'created_at' THEN 
+            CASE 
+                WHEN $5::text = 'asc' THEN l.created_at 
+            END 
+    END ASC,
+    CASE 
+        WHEN $4::text = 'created_at' THEN 
+            CASE 
+                WHEN $5::text = 'desc' THEN l.created_at 
+            END 
+    END DESC
+LIMIT $1
+OFFSET $2
+`
+
+type GetIngredientsParams struct {
+	Limit   int32  `json:"limit"`
+	Offset  int32  `json:"offset"`
+	Keyword string `json:"keyword"`
+	SortBy  string `json:"sort_by"`
+	OrderBy string `json:"order_by"`
+}
+
+func (q *Queries) GetIngredients(ctx context.Context, arg GetIngredientsParams) ([]Ingredient, error) {
+	rows, err := q.db.Query(ctx, getIngredients,
+		arg.Limit,
+		arg.Offset,
+		arg.Keyword,
+		arg.SortBy,
+		arg.OrderBy,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Ingredient
+	for rows.Next() {
+		var i Ingredient
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Removal,
+			&i.Kcal,
+			&i.Protein,
+			&i.Lipits,
+			&i.Glucids,
+			&i.Canxi,
+			&i.Phosphor,
+			&i.Fe,
+			&i.VitaminA,
+			&i.VitaminB1,
+			&i.VitaminB2,
+			&i.VitaminC,
+			&i.VitaminPp,
+			&i.BetaCaroten,
+			&i.CategoryID,
+			&i.Status,
+			&i.CreatedAt,
+			&i.CreatedBy,
+			&i.UpdatedAt,
+			&i.UpdatedBy,
+			&i.DeletedAt,
+			&i.DeletedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateIngredient = `-- name: UpdateIngredient :exec

@@ -17,12 +17,12 @@ import (
 
 type AuthHandler struct {
 	userUseCase usecases.UserUseCase
-	authUseCase usecases.AccountUseCase
+	authUseCase usecases.AuthUseCase
 }
 
 func NewAuthHandler(
 	userUseCase usecases.UserUseCase,
-	authUseCase usecases.AccountUseCase,
+	authUseCase usecases.AuthUseCase,
 ) *AuthHandler {
 	return &AuthHandler{
 		userUseCase: userUseCase,

@@ -3,10 +3,25 @@ SELECT *
 FROM ingredients
 WHERE id = $1 AND status != 'deleted';
 
--- name: GetAllIngredient :one
-SELECT *
-FROM ingredients 
-WHERE status != 'deleted';
+-- name: GetIngredients :many
+SELECT l.*
+FROM ingredients l
+WHERE (@keyword::text = '' or l.name ilike concat('%',@keyword::text,'%'))
+ORDER BY
+    CASE 
+        WHEN @sort_by::text = 'created_at' THEN 
+            CASE 
+                WHEN @order_by::text = 'asc' THEN l.created_at 
+            END 
+    END ASC,
+    CASE 
+        WHEN @sort_by::text = 'created_at' THEN 
+            CASE 
+                WHEN @order_by::text = 'desc' THEN l.created_at 
+            END 
+    END DESC
+LIMIT $1
+OFFSET $2;
 
 -- name: CreateIngredient :exec
 INSERT INTO ingredients (
@@ -77,4 +92,6 @@ FROM ingredients i
 JOIN recipes r ON i.id = r.ingredient_id
 WHERE r.dish_id = $1 AND i.status != 'deleted';
 
-
+-- name: CountIngredients :one
+SELECT COUNT(*) FROM ingredients
+WHERE status != 'deleted';

@@ -10,7 +10,12 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func NewRouter(handler *echo.Echo, authRouter *AuthRouter, userRouter *UserRouter) {
+func NewRouter(
+	handler *echo.Echo,
+	authRouter *AuthRouter,
+	userRouter *UserRouter,
+	ingredientRouter *IngredientRouter,
+) {
 	handler.Use(
 		middleware.CORSWithConfig(
 			middleware.CORSConfig{
@@ -53,4 +58,5 @@ func NewRouter(handler *echo.Echo, authRouter *AuthRouter, userRouter *UserRoute
 	v1 := h.Group("/v1")
 	userRouter.Register(v1)
 	authRouter.Register(v1)
+	ingredientRouter.Register(v1)
 }

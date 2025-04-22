@@ -56,14 +56,33 @@ func (s *Server) Start() {
 	q := db.New(s.pg.Pool)
 	userRepo := repositories.NewUserRepository(q)
 	accountRepo := repositories.NewAccountRepository(q)
+	ingredientRepo := repositories.NewIngredientRepository(q)
+
 	userUseCase := usecases.NewUserUseCase(userRepo, accountRepo)
 	authUseCase := usecases.NewAuthUseCase(accountRepo, userRepo)
+	ingredientUseCase := usecases.NewIngredientUseCase(ingredientRepo)
+
 	authHandler := handlers.NewAuthHandler(userUseCase, authUseCase)
 	userHandler := handlers.NewUserHanlder(userUseCase)
+	ingredientHandler := handlers.NewIngredientHandler(ingredientUseCase)
 
+	authMiddleware := middlewares.JWTAuthMiddleware(
+		[]byte(s.config.JwtSecret),
+		userUseCase,
+	)
 	authRouter := routes.NewAuthRouter(authHandler)
-	userRouter := routes.NewUserRouter(userHandler, nil)
-	routes.NewRouter(s.server, authRouter, userRouter)
+	userRouter := routes.NewUserRouter(userHandler, authMiddleware)
+	ingredientRouter := routes.NewIngredientRouter(
+		ingredientHandler,
+		authMiddleware,
+	)
+
+	routes.NewRouter(
+		s.server,
+		authRouter,
+		userRouter,
+		ingredientRouter,
+	)
 
 	s.configLogger()
 	addr := fmt.Sprintf(":%s", s.config.Port)

@@ -168,6 +168,39 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const getUserByAccountId = `-- name: GetUserByAccountId :one
+SELECT users.id, users.first_name, users.last_name, users.username, users.age, users.height, users.weight, users.gender, users.exercise_level, users.aim, users.status, users.created_at, users.created_by, users.updated_at, users.updated_by, users.deleted_at, users.deleted_by
+FROM users
+JOIN accounts ON users.id = accounts.user_id
+WHERE accounts.id = $1 AND users.status != 'deleted'
+  AND accounts.status != 'deleted'
+`
+
+func (q *Queries) GetUserByAccountId(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByAccountId, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Username,
+		&i.Age,
+		&i.Height,
+		&i.Weight,
+		&i.Gender,
+		&i.ExerciseLevel,
+		&i.Aim,
+		&i.Status,
+		&i.CreatedAt,
+		&i.CreatedBy,
+		&i.UpdatedAt,
+		&i.UpdatedBy,
+		&i.DeletedAt,
+		&i.DeletedBy,
+	)
+	return i, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT users.id, first_name, last_name, username, age, height, weight, gender, exercise_level, aim, users.status, users.created_at, users.created_by, users.updated_at, users.updated_by, users.deleted_at, users.deleted_by, accounts.id, user_id, email, password, accounts.status, accounts.created_at, accounts.created_by, accounts.updated_at, accounts.updated_by, accounts.deleted_at, accounts.deleted_by
 FROM users

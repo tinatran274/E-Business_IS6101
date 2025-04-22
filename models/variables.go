@@ -29,4 +29,24 @@ var (
 	DefaultGender        string = "female"
 	DefaultExerciseLevel string = "no exercise"
 	DefaultAim           string = "maintain weight"
+
+	LimitNameLength int = 20
+	MinAge          int = 18
+	MaxAge          int = 100
+	MinHeight       int = 140
+	MaxHeight       int = 220
+	MinWeight       int = 30
+	MaxWeight       int = 200
+
+	ValidOrderBy = map[string]bool{
+		"updated_at": true,
+		"created_at": true,
+		"name":       true,
+		"calories":   true,
+	}
+
+	ValidSortBy = map[string]bool{
+		"asc":  true,
+		"desc": true,
+	}
 )

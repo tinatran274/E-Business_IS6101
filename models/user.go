@@ -12,6 +12,10 @@ type UserRepository interface {
 	Create(context.Context, *User) error
 	GetUserById(context.Context, uuid.UUID) (*User, error)
 	GetAllUser(context.Context) ([]*User, error)
+	GetUserByAccountId(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*User, error)
 	CreateUser(context.Context, *User) error
 	UpdateUser(context.Context, *User) error
 }
@@ -34,6 +38,18 @@ type User struct {
 	UpdatedBy     *uuid.UUID `json:"updated_by"`
 	DeletedAt     *time.Time `json:"deleted_at"`
 	DeletedBy     *uuid.UUID `json:"deleted_by"`
+}
+
+type UpdateUserRequest struct {
+	FirstName     string `json:"first_name"`
+	LastName      string `json:"last_name"`
+	Username      string `json:"username"`
+	Age           int    `json:"age"`
+	Height        int    `json:"height"`
+	Weight        int    `json:"weight"`
+	Gender        string `json:"gender"`
+	ExerciseLevel string `json:"exercise_level"`
+	Aim           string `json:"aim"`
 }
 
 func NewUser(

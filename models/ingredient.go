@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"time"
 
 	db "10.0.0.50/tuan.quang.tran/aioz-ads/db/generated"
@@ -8,11 +9,22 @@ import (
 )
 
 type IngredientRepository interface {
+	GetIngredientByID(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*Ingredient, error)
+	GetIngredients(
+		ctx context.Context,
+		filter FilterParams,
+	) ([]*Ingredient, error)
+	CountIngredients(
+		ctx context.Context,
+		filter FilterParams,
+	) (int, error)
 }
 
 type Ingredient struct {
 	ID          uuid.UUID  `json:"id"`
-	Email       string     `json:"email"`
 	Name        string     `json:"name"`
 	Description *string    `json:"description"`
 	Removal     float64    `json:"removal"`
@@ -29,7 +41,7 @@ type Ingredient struct {
 	VitaminC    float64    `json:"vitamin_c"`
 	VitaminPp   float64    `json:"vitamin_pp"`
 	BetaCaroten float64    `json:"beta_caroten"`
-	CategoryID  uuid.UUID  `json:"category_id"`
+	Category    Category   `json:"category"`
 	Status      string     `json:"status"`
 	CreatedAt   time.Time  `json:"created_at"`
 	CreatedBy   *uuid.UUID `json:"created_by"`
@@ -39,12 +51,19 @@ type Ingredient struct {
 	DeletedBy   *uuid.UUID `json:"deleted_by"`
 }
 
+type FilterParams struct {
+	Limit   int32  `query:"limit"`
+	Offset  int32  `query:"offset"`
+	Keyword string `query:"keyword"`
+	SortBy  string `query:"sort_by"`
+	OrderBy string `query:"order_by"`
+}
+
 func NewIngredient(
 	name string,
 	description *string,
 	removal, kcal, protein, lipits, glucids, canxi, phosphor, fe,
 	vitaminA, vitaminB1, vitaminB2, vitaminC, vitaminPp, betaCaroten float64,
-	categoryID uuid.UUID,
 ) *Ingredient {
 	return &Ingredient{
 		ID:          uuid.New(),

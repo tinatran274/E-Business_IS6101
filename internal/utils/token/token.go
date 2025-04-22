@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("gewiiureireu8e")
+var jwtSecret = []byte("cwMDQsImlhdCI6MTc0NTE4NzgwNCwic3ViIjoiMzhlNTczN2QtM")
 
 const tokenExpiry = time.Hour * 72
 

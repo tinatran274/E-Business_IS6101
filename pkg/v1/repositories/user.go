@@ -52,6 +52,24 @@ func (r *UserRepository) GetUserById(
 	return models.ToUser(user), nil
 }
 
+func (r *UserRepository) GetUserByAccountId(
+	ctx context.Context,
+	id uuid.UUID,
+) (*models.User, error) {
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.DbSum.WithLabelValues("GetUserByAccountId").
+			Observe(time.Since(t).Seconds())
+	}()
+
+	user, err := r.q.GetUserByAccountId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return models.ToUser(user), nil
+}
+
 func (r *UserRepository) GetAllUser(
 	ctx context.Context) ([]*models.User, error) {
 	t := time.Now().UTC()
@@ -101,5 +119,28 @@ func (r *UserRepository) UpdateUser(
 	ctx context.Context,
 	user *models.User,
 ) error {
-	panic("implement me")
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.DbSum.WithLabelValues("UpdateUser").
+			Observe(time.Since(t).Seconds())
+	}()
+	params := db.UpdateUserParams{
+		ID:            user.ID,
+		FirstName:     user.FirstName,
+		LastName:      user.LastName,
+		Username:      user.Username,
+		Age:           user.Age,
+		Height:        user.Height,
+		Weight:        user.Weight,
+		Gender:        user.Gender,
+		ExerciseLevel: user.ExerciseLevel,
+		Aim:           user.Aim,
+		Status:        user.Status,
+	}
+	err := r.q.UpdateUser(ctx, params)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
