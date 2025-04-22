@@ -12,6 +12,18 @@ import (
 	"github.com/google/uuid"
 )
 
+const countDishes = `-- name: CountDishes :one
+SELECT COUNT(*) FROM dishes
+WHERE status != 'deleted'
+`
+
+func (q *Queries) CountDishes(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countDishes)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createDish = `-- name: CreateDish :exec
 INSERT INTO dishes (
   id, 
@@ -76,31 +88,6 @@ func (q *Queries) DeleteDish(ctx context.Context, arg DeleteDishParams) error {
 	return err
 }
 
-const getAllDish = `-- name: GetAllDish :one
-SELECT id, name, description, category_id, status, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
-FROM dishes 
-WHERE status != 'deleted'
-`
-
-func (q *Queries) GetAllDish(ctx context.Context) (Dish, error) {
-	row := q.db.QueryRow(ctx, getAllDish)
-	var i Dish
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.CategoryID,
-		&i.Status,
-		&i.CreatedAt,
-		&i.CreatedBy,
-		&i.UpdatedAt,
-		&i.UpdatedBy,
-		&i.DeletedAt,
-		&i.DeletedBy,
-	)
-	return i, err
-}
-
 const getDishById = `-- name: GetDishById :one
 SELECT id, name, description, category_id, status, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 FROM dishes
@@ -135,6 +122,73 @@ WHERE r.ingredient_id = $1 AND d.status != 'deleted'
 
 func (q *Queries) GetDishByIngredientId(ctx context.Context, ingredientID uuid.UUID) ([]Dish, error) {
 	rows, err := q.db.Query(ctx, getDishByIngredientId, ingredientID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Dish
+	for rows.Next() {
+		var i Dish
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CategoryID,
+			&i.Status,
+			&i.CreatedAt,
+			&i.CreatedBy,
+			&i.UpdatedAt,
+			&i.UpdatedBy,
+			&i.DeletedAt,
+			&i.DeletedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getDishes = `-- name: GetDishes :many
+SELECT l.id, l.name, l.description, l.category_id, l.status, l.created_at, l.created_by, l.updated_at, l.updated_by, l.deleted_at, l.deleted_by
+FROM dishes l
+WHERE ($3::text = '' or l.name ilike concat('%',$3::text,'%'))
+ORDER BY
+    CASE 
+        WHEN $4::text = 'created_at' THEN 
+            CASE 
+                WHEN $5::text = 'asc' THEN l.created_at 
+            END 
+    END ASC,
+    CASE 
+        WHEN $4::text = 'created_at' THEN 
+            CASE 
+                WHEN $5::text = 'desc' THEN l.created_at 
+            END 
+    END DESC
+LIMIT $1
+OFFSET $2
+`
+
+type GetDishesParams struct {
+	Limit   int32  `json:"limit"`
+	Offset  int32  `json:"offset"`
+	Keyword string `json:"keyword"`
+	SortBy  string `json:"sort_by"`
+	OrderBy string `json:"order_by"`
+}
+
+func (q *Queries) GetDishes(ctx context.Context, arg GetDishesParams) ([]Dish, error) {
+	rows, err := q.db.Query(ctx, getDishes,
+		arg.Limit,
+		arg.Offset,
+		arg.Keyword,
+		arg.SortBy,
+		arg.OrderBy,
+	)
 	if err != nil {
 		return nil, err
 	}

@@ -12,24 +12,24 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type IngredientHandler struct {
-	ingredientUseCase usecases.IngredientUseCase
+type DishHandler struct {
+	dishUseCase usecases.DishUseCase
 }
 
-func NewIngredientHandler(ingredientUseCase usecases.IngredientUseCase) *IngredientHandler {
-	return &IngredientHandler{
-		ingredientUseCase: ingredientUseCase,
+func NewDishHandler(dishUseCase usecases.DishUseCase) *DishHandler {
+	return &DishHandler{
+		dishUseCase: dishUseCase,
 	}
 }
 
-type IngredientResponse struct {
-	Inredients []*models.Ingredient `json:"ingredients"`
-	Total      int                  `json:"total"`
+type DishResponse struct {
+	Dishes []*models.Dish `json:"dishes"`
+	Total  int            `json:"total"`
 }
 
-// @Summary		Get ingredients
-// @Description	Retrieve a list of ingredients with filtering and sorting
-// @Tags			ingredient
+// @Summary		Get dishes
+// @Description	Retrieve a list of dishes with filtering and sorting
+// @Tags			dish
 // @Security		BasicAuth
 // @Security		Bearer
 // @Accept			json
@@ -42,11 +42,11 @@ type IngredientResponse struct {
 // @Success		200			{object}	response.GeneralResponse
 // @Failure		400			{object}	response.GeneralResponse
 // @Failure		500			{object}	response.GeneralResponse
-// @Router			/ingredient [get]
-func (h *IngredientHandler) GetIngredients(ctx echo.Context) error {
+// @Router			/dish [get]
+func (h *DishHandler) GetDishs(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
-		metrics.DbMetricsIns.ApiSum.WithLabelValues("GetIngredients").
+		metrics.DbMetricsIns.ApiSum.WithLabelValues("GetDishs").
 			Observe(time.Since(t).Seconds())
 	}()
 
@@ -82,47 +82,47 @@ func (h *IngredientHandler) GetIngredients(ctx echo.Context) error {
 		)
 	}
 
-	ingredients, total, err := h.ingredientUseCase.GetIngredients(ctx.Request().Context(), params)
+	dishes, total, err := h.dishUseCase.GetDishes(ctx.Request().Context(), params)
 	if err != nil {
 		return response.ResponseError(ctx, err)
 	}
 
-	return response.ResponseSuccess(ctx, http.StatusOK, IngredientResponse{
-		Inredients: ingredients,
-		Total:      total,
+	return response.ResponseSuccess(ctx, http.StatusOK, DishResponse{
+		Dishes: dishes,
+		Total:  total,
 	})
 }
 
-// @Summary		Get ingredient by ID
-// @Description	Retrieve an ingredient by its ID
-// @Tags			ingredient
+// @Summary		Get dish by ID
+// @Description	Retrieve an dish by its ID
+// @Tags			dish
 // @Security		BasicAuth
 // @Security		Bearer
 // @Accept			json
 // @Produce		json
-// @Param			id	path		string	true	"Ingredient ID (UUID)"
+// @Param			id	path		string	true	"Dish ID (UUID)"
 // @Success		200	{object}	response.GeneralResponse
 // @Failure		400	{object}	response.GeneralResponse
 // @Failure		404	{object}	response.GeneralResponse
 // @Failure		500	{object}	response.GeneralResponse
-// @Router			/ingredient/{id} [get]
-func (h *IngredientHandler) GetIngredientByID(ctx echo.Context) error {
+// @Router			/dish/{id} [get]
+func (h *DishHandler) GetDishByID(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
-		metrics.DbMetricsIns.ApiSum.WithLabelValues("GetIngredientByID").
+		metrics.DbMetricsIns.ApiSum.WithLabelValues("GetDishByID").
 			Observe(time.Since(t).Seconds())
 	}()
 
 	idParam := ctx.Param("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		return response.ResponseError(ctx, response.NewBadRequestError("Invalid ingredient ID format."))
+		return response.ResponseError(ctx, response.NewBadRequestError("Invalid dish ID format."))
 	}
 
-	ingredient, err := h.ingredientUseCase.GetIngredientByID(ctx.Request().Context(), id)
+	dish, err := h.dishUseCase.GetDishByID(ctx.Request().Context(), id)
 	if err != nil {
 		return response.ResponseError(ctx, err)
 	}
 
-	return response.ResponseSuccess(ctx, http.StatusOK, ingredient)
+	return response.ResponseSuccess(ctx, http.StatusOK, dish)
 }

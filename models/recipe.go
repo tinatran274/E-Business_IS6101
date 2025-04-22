@@ -1,8 +1,20 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type RecipeRepository interface {
+	CreateRecipe(
+		ctx context.Context,
+		recipe *Recipe,
+	) (*Recipe, error)
+	DeleteRecipe(
+		ctx context.Context,
+		dishId, ingredientId uuid.UUID,
+	) error
 }
 
 type Recipe struct {

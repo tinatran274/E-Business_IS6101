@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"time"
 
 	db "10.0.0.50/tuan.quang.tran/aioz-ads/db/generated"
@@ -8,13 +9,25 @@ import (
 )
 
 type DishRepository interface {
+	GetDishByID(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*Dish, error)
+	GetDishes(
+		ctx context.Context,
+		filter FilterParams,
+	) ([]*Dish, error)
+	CountDishes(
+		ctx context.Context,
+		filter FilterParams,
+	) (int, error)
 }
 
 type Dish struct {
 	ID          uuid.UUID  `json:"id"`
 	Name        string     `json:"name"`
 	Description *string    `json:"description"`
-	CategoryID  uuid.UUID  `json:"category_id"`
+	Category    Category   `json:"category"`
 	Status      string     `json:"status"`
 	CreatedAt   time.Time  `json:"created_at"`
 	CreatedBy   *uuid.UUID `json:"created_by"`
@@ -27,13 +40,11 @@ type Dish struct {
 func NewDish(
 	name string,
 	description *string,
-	categoryID uuid.UUID,
 ) *Dish {
 	return &Dish{
 		ID:          uuid.New(),
 		Name:        name,
 		Description: description,
-		CategoryID:  categoryID,
 		Status:      ActiveStatus,
 		CreatedAt:   time.Now().UTC(),
 		CreatedBy:   nil,
@@ -49,7 +60,6 @@ func ToDish(d db.Dish) *Dish {
 		ID:          d.ID,
 		Name:        d.Name,
 		Description: d.Description,
-		CategoryID:  d.CategoryID,
 		Status:      d.Status,
 		CreatedAt:   d.CreatedAt,
 		CreatedBy:   d.CreatedBy,

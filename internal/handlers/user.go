@@ -25,18 +25,18 @@ func NewUserHanlder(userUseCase usecases.UserUseCase) *UserHandler {
 	}
 }
 
-//	@Summary		Get me
-//	@Description	get current user
-//	@Tags			users
-//	@Security		BasicAuth
-//	@Security		Bearer
-//	@Accept			json
-//	@Produce		json
-//	@Accept			x-www-form-urlencoded
-//	@Success		200	{object}	response.GeneralResponse
-//	@Failure		400	{object}	response.GeneralResponse
-//	@Failure		500	{object}	response.GeneralResponse
-//	@Router			/user/me [get]
+// @Summary		Get me
+// @Description	get current user
+// @Tags			user
+// @Security		BasicAuth
+// @Security		Bearer
+// @Accept			json
+// @Produce		json
+// @Accept			x-www-form-urlencoded
+// @Success		200	{object}	response.GeneralResponse
+// @Failure		400	{object}	response.GeneralResponse
+// @Failure		500	{object}	response.GeneralResponse
+// @Router			/user/me [get]
 func (h *UserHandler) GetMe(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -61,18 +61,18 @@ type UserResponse struct {
 	UserList []models.User `json:"user"`
 }
 
-//	@Summary		Get all
-//	@Description	get all user
-//	@Tags			users
-//	@Security		BasicAuth
-//	@Security		Bearer
-//	@Accept			json
-//	@Produce		json
-//	@Accept			x-www-form-urlencoded
-//	@Success		200	{object}	response.GeneralResponse
-//	@Failure		500	{object}	response.GeneralResponse
-//	@Failure		500	{object}	response.GeneralResponse
-//	@Router			/user [get]
+// @Summary		Get all
+// @Description	get all user
+// @Tags			user
+// @Security		BasicAuth
+// @Security		Bearer
+// @Accept			json
+// @Produce		json
+// @Accept			x-www-form-urlencoded
+// @Success		200	{object}	response.GeneralResponse
+// @Failure		500	{object}	response.GeneralResponse
+// @Failure		500	{object}	response.GeneralResponse
+// @Router			/user [get]
 func (h *UserHandler) GetAll(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -102,20 +102,20 @@ func (h *UserHandler) GetAll(ctx echo.Context) error {
 	return response.ResponseSuccess(ctx, http.StatusOK, responsePayload)
 }
 
-//	@Summary		Get user by ID
-//	@Description	Get a user by their ID
-//	@Tags			users
-//	@Security		BasicAuth
-//	@Security		Bearer
-//	@Accept			json
-//	@Produce		json
-//	@Accept			x-www-form-urlencoded
-//	@Param			id	path		string	true	"User ID"
-//	@Success		200	{object}	response.GeneralResponse
-//	@Failure		400	{object}	response.GeneralResponse
-//	@Failure		404	{object}	response.GeneralResponse
-//	@Failure		500	{object}	response.GeneralResponse
-//	@Router			/user/{id} [get]
+// @Summary		Get user by ID
+// @Description	Get a user by their ID
+// @Tags			user
+// @Security		BasicAuth
+// @Security		Bearer
+// @Accept			json
+// @Produce		json
+// @Accept			x-www-form-urlencoded
+// @Param			id	path		string	true	"User ID"
+// @Success		200	{object}	response.GeneralResponse
+// @Failure		400	{object}	response.GeneralResponse
+// @Failure		404	{object}	response.GeneralResponse
+// @Failure		500	{object}	response.GeneralResponse
+// @Router			/user/{id} [get]
 func (h *UserHandler) GetByID(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -146,21 +146,21 @@ func (h *UserHandler) GetByID(ctx echo.Context) error {
 	return response.ResponseSuccess(ctx, http.StatusOK, responsePayload)
 }
 
-//	@Summary		Update user
-//	@Description	Update a user by their ID
-//	@Tags			users
-//	@Security		BasicAuth
-//	@Security		Bearer
-//	@Accept			json
-//	@Produce		json
-//	@Accept			x-www-form-urlencoded
-//	@Param			id		path		string						true	"User ID"
-//	@Param			user	body		models.UpdateUserRequest	true	"User info"
-//	@Success		200		{object}	response.GeneralResponse
-//	@Failure		400		{object}	response.GeneralResponse
-//	@Failure		404		{object}	response.GeneralResponse
-//	@Failure		500		{object}	response.GeneralResponse
-//	@Router			/user/{id} [put]
+// @Summary		Update user
+// @Description	Update a user by their ID
+// @Tags			user
+// @Security		BasicAuth
+// @Security		Bearer
+// @Accept			json
+// @Produce		json
+// @Accept			x-www-form-urlencoded
+// @Param			id		path		string						true	"User ID"
+// @Param			user	body		models.UpdateUserRequest	true	"User info"
+// @Success		200		{object}	response.GeneralResponse
+// @Failure		400		{object}	response.GeneralResponse
+// @Failure		404		{object}	response.GeneralResponse
+// @Failure		500		{object}	response.GeneralResponse
+// @Router			/user/{id} [put]
 func (h *UserHandler) Update(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {

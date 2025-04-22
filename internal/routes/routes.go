@@ -15,6 +15,7 @@ func NewRouter(
 	authRouter *AuthRouter,
 	userRouter *UserRouter,
 	ingredientRouter *IngredientRouter,
+	dishRouter *DishRouter,
 ) {
 	handler.Use(
 		middleware.CORSWithConfig(
@@ -59,4 +60,5 @@ func NewRouter(
 	userRouter.Register(v1)
 	authRouter.Register(v1)
 	ingredientRouter.Register(v1)
+	dishRouter.Register(v1)
 }

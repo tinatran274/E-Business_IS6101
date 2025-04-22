@@ -57,14 +57,17 @@ func (s *Server) Start() {
 	userRepo := repositories.NewUserRepository(q)
 	accountRepo := repositories.NewAccountRepository(q)
 	ingredientRepo := repositories.NewIngredientRepository(q)
+	dishRepo := repositories.NewDishRepository(q)
 
 	userUseCase := usecases.NewUserUseCase(userRepo, accountRepo)
 	authUseCase := usecases.NewAuthUseCase(accountRepo, userRepo)
 	ingredientUseCase := usecases.NewIngredientUseCase(ingredientRepo)
+	dishUseCase := usecases.NewDishUseCase(dishRepo)
 
 	authHandler := handlers.NewAuthHandler(userUseCase, authUseCase)
 	userHandler := handlers.NewUserHanlder(userUseCase)
 	ingredientHandler := handlers.NewIngredientHandler(ingredientUseCase)
+	dishHandler := handlers.NewDishHandler(dishUseCase)
 
 	authMiddleware := middlewares.JWTAuthMiddleware(
 		[]byte(s.config.JwtSecret),
@@ -76,12 +79,17 @@ func (s *Server) Start() {
 		ingredientHandler,
 		authMiddleware,
 	)
+	dishRouter := routes.NewDishRouter(
+		dishHandler,
+		authMiddleware,
+	)
 
 	routes.NewRouter(
 		s.server,
 		authRouter,
 		userRouter,
 		ingredientRouter,
+		dishRouter,
 	)
 
 	s.configLogger()

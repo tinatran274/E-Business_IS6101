@@ -151,6 +151,89 @@ paths:
       summary: Sign up
       tags:
       - auth
+  /dish:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of dishes with filtering and sorting
+      parameters:
+      - description: Limit (1-100), default is 25
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Search keyword for name
+        in: query
+        name: keyword
+        type: string
+      - description: 'Sort direction: asc or desc'
+        in: query
+        name: sort_by
+        type: string
+      - description: 'Field to sort by, allowed: updated_at'
+        in: query
+        name: order_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get dishes
+      tags:
+      - dish
+  /dish/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an dish by its ID
+      parameters:
+      - description: Dish ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get dish by ID
+      tags:
+      - dish
   /ingredient:
     get:
       consumes:
@@ -197,7 +280,7 @@ paths:
       - Bearer: []
       summary: Get ingredients
       tags:
-      - ingredients
+      - ingredient
   /ingredient/{id}:
     get:
       consumes:
@@ -233,7 +316,7 @@ paths:
       - Bearer: []
       summary: Get ingredient by ID
       tags:
-      - ingredients
+      - ingredient
   /user:
     get:
       consumes:
@@ -256,7 +339,7 @@ paths:
       - Bearer: []
       summary: Get all
       tags:
-      - users
+      - user
   /user/{id}:
     get:
       consumes:
@@ -293,7 +376,7 @@ paths:
       - Bearer: []
       summary: Get user by ID
       tags:
-      - users
+      - user
     put:
       consumes:
       - application/json
@@ -335,7 +418,7 @@ paths:
       - Bearer: []
       summary: Update user
       tags:
-      - users
+      - user
   /user/me:
     get:
       consumes:
@@ -362,7 +445,7 @@ paths:
       - Bearer: []
       summary: Get me
       tags:
-      - users
+      - user
 securityDefinitions:
   BasicAuth:
     type: basic

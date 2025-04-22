@@ -6,6 +6,7 @@ import (
 	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/utils/response"
 	"10.0.0.50/tuan.quang.tran/aioz-ads/models"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 type IngredientUseCase struct {
@@ -24,6 +25,10 @@ func (s *IngredientUseCase) GetIngredientByID(
 ) (*models.Ingredient, error) {
 	ingredient, err := s.ingredientRepo.GetIngredientByID(ctx, id)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, response.NewNotFoundError("Ingredient not found.")
+		}
+
 		return nil, response.NewInternalServerError(err)
 	}
 	return ingredient, nil
