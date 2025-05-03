@@ -7,6 +7,19 @@ definitions:
       password:
         type: string
     type: object
+  handlers.UpdateStatisticRequest:
+    properties:
+      dinner_calories:
+        type: number
+      exercise_calories:
+        type: number
+      lunch_calories:
+        type: number
+      morning_calories:
+        type: number
+      snack_calories:
+        type: number
+    type: object
   models.UpdateUserRequest:
     properties:
       age:
@@ -234,6 +247,58 @@ paths:
       summary: Get dish by ID
       tags:
       - dish
+  /dish/{id}/ingredient:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of dishes by ingredient ID
+      parameters:
+      - description: Limit (1-100), default is 25
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: 'Sort direction: asc or desc, default is asc'
+        in: query
+        name: sort_by
+        type: string
+      - description: 'Field to sort by, allowed: updated_at, default is updated_at'
+        in: query
+        name: order_by
+        type: string
+      - description: Ingredient ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: GetDishByIngredientID
+      tags:
+      - dish
   /dish/{id}/like:
     post:
       consumes:
@@ -389,6 +454,81 @@ paths:
       summary: Get ingredient by ID
       tags:
       - ingredient
+  /statistic/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: get statistic by user id and date
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Updated At
+        format: date-time
+        in: query
+        name: updated_at
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get statistic by user id and date
+      tags:
+      - statistic
+    put:
+      consumes:
+      - application/json
+      description: update statistic by user id and date
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Statistic
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateStatisticRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Update statistic by user id and date
+      tags:
+      - statistic
   /user:
     get:
       consumes:

@@ -41,3 +41,15 @@ sql:
           - db_type: "TEXT"
             go_type: "string"
 
+          - db_type: "date"
+            go_type:
+              import: "time"
+              type: "Time"
+
+          - db_type: "date"
+            go_type:
+              import: "time"
+              type: "Time"
+              pointer: true
+            nullable: true
+

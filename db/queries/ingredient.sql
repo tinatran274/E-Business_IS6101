@@ -87,7 +87,7 @@ SET
 WHERE id = $1 AND status != 'deleted';
 
 -- name: GetIngredientByDishId :many
-SELECT i.* 
+SELECT i.*, r.unit
 FROM ingredients i
 JOIN recipes r ON i.id = r.ingredient_id
 WHERE r.dish_id = $1 AND i.status != 'deleted';

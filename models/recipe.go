@@ -41,3 +41,8 @@ func ToRecipe(r Recipe) *Recipe {
 		Unit:         r.Unit,
 	}
 }
+
+func (r *Recipe) CalcGrams() float64 {
+
+	return r.Unit * 1000
+}

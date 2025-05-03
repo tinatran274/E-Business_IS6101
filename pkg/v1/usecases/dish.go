@@ -56,6 +56,24 @@ func (s *DishUseCase) GetDishes(
 	return dishes, total, nil
 }
 
+func (s *DishUseCase) GetDishesByIngredientID(
+	ctx context.Context,
+	id uuid.UUID,
+	filter models.FilterParams,
+) ([]*models.Dish, int, error) {
+	dishes, err := s.dishRepo.GetDishesByIngredientID(ctx, id, filter)
+	if err != nil {
+		return nil, 0, response.NewInternalServerError(err)
+	}
+
+	total, err := s.dishRepo.CountDishesByIngredientID(ctx, id, filter)
+	if err != nil {
+		return nil, 0, response.NewInternalServerError(err)
+	}
+
+	return dishes, total, nil
+}
+
 func (s *DishUseCase) LikeDish(
 	ctx context.Context,
 	dishId uuid.UUID,

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Account struct {
@@ -93,13 +92,13 @@ type Recipe struct {
 }
 
 type Statistic struct {
-	UpdatedAt        pgtype.Date `json:"updated_at"`
-	UserID           uuid.UUID   `json:"user_id"`
-	MorningCalories  float64     `json:"morning_calories"`
-	LunchCalories    float64     `json:"lunch_calories"`
-	DinnerCalories   float64     `json:"dinner_calories"`
-	SnackCalories    float64     `json:"snack_calories"`
-	ExerciseCalories float64     `json:"exercise_calories"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	UserID           uuid.UUID `json:"user_id"`
+	MorningCalories  float64   `json:"morning_calories"`
+	LunchCalories    float64   `json:"lunch_calories"`
+	DinnerCalories   float64   `json:"dinner_calories"`
+	SnackCalories    float64   `json:"snack_calories"`
+	ExerciseCalories float64   `json:"exercise_calories"`
 }
 
 type User struct {

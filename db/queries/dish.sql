@@ -59,12 +59,33 @@ SET
 WHERE id = $1 AND status != 'deleted';
 
 
--- name: GetDishByIngredientId :many
+-- name: GetDishesByIngredientId :many
 SELECT d.*
 FROM dishes d
 JOIN recipes r ON d.id = r.dish_id
-WHERE r.ingredient_id = $1 AND d.status != 'deleted';
+WHERE r.ingredient_id = $3 AND d.status != 'deleted'
+ORDER BY
+    CASE 
+        WHEN @sort_by::text = 'created_at' THEN 
+            CASE 
+                WHEN @order_by::text = 'asc' THEN d.created_at 
+            END 
+    END ASC,
+    CASE 
+        WHEN @sort_by::text = 'created_at' THEN 
+            CASE 
+                WHEN @order_by::text = 'desc' THEN d.created_at 
+            END 
+    END DESC
+LIMIT $1
+OFFSET $2;
 
 -- name: CountDishes :one
 SELECT COUNT(*) FROM dishes
 WHERE status != 'deleted';
+
+-- name: CountDishesByIngredientId :one
+SELECT COUNT(*) FROM dishes d
+JOIN recipes r ON d.id = r.dish_id
+WHERE r.ingredient_id = $1 AND d.status != 'deleted';
+

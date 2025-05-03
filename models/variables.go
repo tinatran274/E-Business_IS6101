@@ -30,13 +30,14 @@ var (
 	DefaultExerciseLevel string = "no exercise"
 	DefaultAim           string = "maintain weight"
 
-	LimitNameLength int = 20
-	MinAge          int = 18
-	MaxAge          int = 100
-	MinHeight       int = 140
-	MaxHeight       int = 220
-	MinWeight       int = 30
-	MaxWeight       int = 200
+	LimitNameLength int     = 20
+	MinAge          int     = 18
+	MaxAge          int     = 100
+	MinHeight       int     = 140
+	MaxHeight       int     = 220
+	MinWeight       int     = 30
+	MaxWeight       int     = 200
+	LimitCalories   float64 = 1000
 
 	ValidOrderBy = map[string]bool{
 		"updated_at": true,
@@ -49,4 +50,7 @@ var (
 		"asc":  true,
 		"desc": true,
 	}
+
+	SortByDefault  string = "asc"
+	OrderByDefault string = "updated_at"
 )

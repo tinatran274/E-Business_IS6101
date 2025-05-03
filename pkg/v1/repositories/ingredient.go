@@ -41,7 +41,7 @@ func (r *IngredientRepository) GetIngredientByID(
 	}
 
 	ingredientModel := models.ToIngredient(ingredient)
-	ingredientModel.Category = *models.ToCategory(category)
+	ingredientModel.Category = models.ToCategory(category)
 	return ingredientModel, nil
 }
 
@@ -75,7 +75,7 @@ func (r *IngredientRepository) GetIngredients(
 			return nil, err
 		}
 
-		result[i].Category = *models.ToCategory(category)
+		result[i].Category = models.ToCategory(category)
 	}
 
 	return result, nil
@@ -116,13 +116,31 @@ func (r *IngredientRepository) GetIngredientByDishId(
 
 	result := make([]*models.Ingredient, len(ingredients))
 	for i, ingredient := range ingredients {
-		result[i] = models.ToIngredient(ingredient)
+		result[i] = &models.Ingredient{
+			ID:          ingredient.ID,
+			Name:        ingredient.Name,
+			Description: ingredient.Description,
+			Removal:     ingredient.Removal,
+			Kcal:        ingredient.Kcal,
+			Protein:     ingredient.Protein,
+			Lipits:      ingredient.Lipits,
+			Glucids:     ingredient.Glucids,
+			Canxi:       ingredient.Canxi,
+			Phosphor:    ingredient.Phosphor,
+			Fe:          ingredient.Fe,
+			VitaminA:    ingredient.VitaminA,
+			VitaminB1:   ingredient.VitaminB1,
+			VitaminB2:   ingredient.VitaminB2,
+			VitaminC:    ingredient.VitaminC,
+			VitaminPp:   ingredient.VitaminPp,
+			BetaCaroten: ingredient.BetaCaroten,
+		}
 		category, err := r.db.GetCategoryById(ctx, ingredient.CategoryID)
 		if err != nil {
 			return nil, err
 		}
 
-		result[i].Category = *models.ToCategory(category)
+		result[i].Category = models.ToCategory(category)
 	}
 
 	return result, nil

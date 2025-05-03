@@ -131,21 +131,50 @@ func (q *Queries) DeleteIngredient(ctx context.Context, arg DeleteIngredientPara
 }
 
 const getIngredientByDishId = `-- name: GetIngredientByDishId :many
-SELECT i.id, i.name, i.description, i.removal, i.kcal, i.protein, i.lipits, i.glucids, i.canxi, i.phosphor, i.fe, i.vitamin_a, i.vitamin_b1, i.vitamin_b2, i.vitamin_c, i.vitamin_pp, i.beta_caroten, i.category_id, i.status, i.created_at, i.created_by, i.updated_at, i.updated_by, i.deleted_at, i.deleted_by 
+SELECT i.id, i.name, i.description, i.removal, i.kcal, i.protein, i.lipits, i.glucids, i.canxi, i.phosphor, i.fe, i.vitamin_a, i.vitamin_b1, i.vitamin_b2, i.vitamin_c, i.vitamin_pp, i.beta_caroten, i.category_id, i.status, i.created_at, i.created_by, i.updated_at, i.updated_by, i.deleted_at, i.deleted_by, r.unit
 FROM ingredients i
 JOIN recipes r ON i.id = r.ingredient_id
 WHERE r.dish_id = $1 AND i.status != 'deleted'
 `
 
-func (q *Queries) GetIngredientByDishId(ctx context.Context, dishID uuid.UUID) ([]Ingredient, error) {
+type GetIngredientByDishIdRow struct {
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
+	Removal     float64    `json:"removal"`
+	Kcal        float64    `json:"kcal"`
+	Protein     float64    `json:"protein"`
+	Lipits      float64    `json:"lipits"`
+	Glucids     float64    `json:"glucids"`
+	Canxi       float64    `json:"canxi"`
+	Phosphor    float64    `json:"phosphor"`
+	Fe          float64    `json:"fe"`
+	VitaminA    float64    `json:"vitamin_a"`
+	VitaminB1   float64    `json:"vitamin_b1"`
+	VitaminB2   float64    `json:"vitamin_b2"`
+	VitaminC    float64    `json:"vitamin_c"`
+	VitaminPp   float64    `json:"vitamin_pp"`
+	BetaCaroten float64    `json:"beta_caroten"`
+	CategoryID  uuid.UUID  `json:"category_id"`
+	Status      string     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
+	CreatedBy   *uuid.UUID `json:"created_by"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	UpdatedBy   *uuid.UUID `json:"updated_by"`
+	DeletedAt   *time.Time `json:"deleted_at"`
+	DeletedBy   *uuid.UUID `json:"deleted_by"`
+	Unit        float64    `json:"unit"`
+}
+
+func (q *Queries) GetIngredientByDishId(ctx context.Context, dishID uuid.UUID) ([]GetIngredientByDishIdRow, error) {
 	rows, err := q.db.Query(ctx, getIngredientByDishId, dishID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Ingredient
+	var items []GetIngredientByDishIdRow
 	for rows.Next() {
-		var i Ingredient
+		var i GetIngredientByDishIdRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -172,6 +201,7 @@ func (q *Queries) GetIngredientByDishId(ctx context.Context, dishID uuid.UUID) (
 			&i.UpdatedBy,
 			&i.DeletedAt,
 			&i.DeletedBy,
+			&i.Unit,
 		); err != nil {
 			return nil, err
 		}

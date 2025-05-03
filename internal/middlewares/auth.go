@@ -22,7 +22,7 @@ func JWTAuthMiddleware(
 		return func(ctx echo.Context) error {
 			authHeader := ctx.Request().Header.Get("Authorization")
 			if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-				return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "missing or invalid token")
+				return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "Missing or invalid token.")
 			}
 
 			tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
