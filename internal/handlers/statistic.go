@@ -24,6 +24,7 @@ func NewStatisticHandler(statisticUseCase usecases.StatisticUseCase) *StatisticH
 }
 
 // GetStatisticByUserIdAndDate
+//
 //	@Summary		Get statistic by user id and date
 //	@Description	get statistic by user id and date
 //	@Tags			statistic
@@ -31,11 +32,11 @@ func NewStatisticHandler(statisticUseCase usecases.StatisticUseCase) *StatisticH
 //	@Security		Bearer
 //	@Accept			json
 //	@Produce		json
-//	@Param			user_id		path		string	true	"User ID"
-//	@Param			updated_at	query		string	true	"Updated At"	Format(date-time)
-//	@Success		200			{object}	response.GeneralResponse
-//	@Failure		400			{object}	response.GeneralResponse
-//	@Failure		500			{object}	response.GeneralResponse
+//	@Param			user_id	path		string	true	"User ID"
+//	@Param			date	query		string	true	"Date"	Format(date-time)
+//	@Success		200		{object}	response.GeneralResponse
+//	@Failure		400		{object}	response.GeneralResponse
+//	@Failure		500		{object}	response.GeneralResponse
 //	@Router			/statistic/{user_id} [get]
 func (h *StatisticHandler) GetStatisticByUserIdAndDate(ctx echo.Context) error {
 	t := time.Now().UTC()
@@ -46,25 +47,84 @@ func (h *StatisticHandler) GetStatisticByUserIdAndDate(ctx echo.Context) error {
 
 	authInfo, ok := ctx.Get(models.AuthInfoKey).(models.AuthenticationInfo)
 	if !ok {
-		return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "unauthorized")
+		return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "Unauthorized.")
 	}
 
 	userID := ctx.Param("user_id")
 	_, err := uuid.Parse(userID)
 	if err != nil {
-		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "invalid user id")
+		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "Invalid user id.")
 	}
 
-	updatedAtStr := ctx.QueryParam("updated_at")
+	updatedAtStr := ctx.QueryParam("date")
 	updatedAt, err := time.Parse(time.DateOnly, updatedAtStr)
 	if err != nil {
-		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "invalid updated at")
+		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "Invalid date.")
 	}
 
 	statistic, err := h.statisticUseCase.GetStatisticByUserIdAndDate(
 		ctx.Request().Context(),
 		authInfo.User.ID,
 		updatedAt,
+	)
+	if err != nil {
+		return response.ResponseError(ctx, err)
+	}
+
+	return response.ResponseSuccess(ctx, http.StatusOK, statistic)
+}
+
+// GetStatisticByUserIdAndDateRange
+//
+//	@Summary		Get statistic by user id and date range
+//	@Description	get statistic by user id and date range
+//	@Tags			statistic
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			user_id		path		string	true	"User ID"
+//	@Param			start_date	query		string	true	"Start date"	Format(date-time)
+//	@Param			end_date	query		string	true	"End date"		Format(date-time)
+//	@Success		200			{object}	response.GeneralResponse
+//	@Failure		400			{object}	response.GeneralResponse
+//	@Failure		500			{object}	response.GeneralResponse
+//	@Router			/statistic/{user_id}/range [get]
+func (h *StatisticHandler) GetStatisticByUserIdAndDateRange(ctx echo.Context) error {
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.ApiSum.WithLabelValues("GetStatisticByUserIdAndDateRange").
+			Observe(time.Since(t).Seconds())
+	}()
+
+	authInfo, ok := ctx.Get(models.AuthInfoKey).(models.AuthenticationInfo)
+	if !ok {
+		return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "Unauthorized.")
+	}
+
+	userID := ctx.Param("user_id")
+	_, err := uuid.Parse(userID)
+	if err != nil {
+		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "Invalid user id.")
+	}
+
+	startDateStr := ctx.QueryParam("start_date")
+	startDate, err := time.Parse(time.DateOnly, startDateStr)
+	if err != nil {
+		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "Invalid start date.")
+	}
+
+	endDateStr := ctx.QueryParam("end_date")
+	endDate, err := time.Parse(time.DateOnly, endDateStr)
+	if err != nil {
+		return response.ResponseFailMessage(ctx, http.StatusBadRequest, "Invalid end date.")
+	}
+
+	statistic, err := h.statisticUseCase.GetStatisticByUserIdAndDateRange(
+		ctx.Request().Context(),
+		authInfo.User.ID,
+		startDate,
+		endDate,
 	)
 	if err != nil {
 		return response.ResponseError(ctx, err)
@@ -82,6 +142,7 @@ type UpdateStatisticRequest struct {
 }
 
 // UpdateStatisticByUserIdAndDate
+//
 //	@Summary		Update statistic by user id and date
 //	@Description	update statistic by user id and date
 //	@Tags			statistic
@@ -163,6 +224,8 @@ func (h *StatisticHandler) UpdateStatisticByUserIdAndDate(ctx echo.Context) erro
 
 	_, err = h.statisticUseCase.UpdateStatisticByUserIdAndDate(
 		ctx.Request().Context(),
+		authInfo,
+		today,
 		statistic,
 	)
 	if err != nil {

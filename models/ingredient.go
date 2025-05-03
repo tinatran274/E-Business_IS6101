@@ -56,25 +56,27 @@ type Ingredient struct {
 }
 
 type IngredientWithUnit struct {
-	ID               uuid.UUID  `json:"id"`
-	Name             string     `json:"name"`
-	Kcal             float64    `json:"kcal"`
-	Protein          float64    `json:"protein"`
-	Lipits           float64    `json:"lipits"`
-	Glucids          float64    `json:"glucids"`
-	Canxi            float64    `json:"canxi"`
-	Phosphor         float64    `json:"phosphor"`
-	Fe               float64    `json:"fe"`
-	VitaminA         float64    `json:"vitamin_a"`
-	VitaminB1        float64    `json:"vitamin_b1"`
-	VitaminB2        float64    `json:"vitamin_b2"`
-	VitaminC         float64    `json:"vitamin_c"`
-	VitaminPp        float64    `json:"vitamin_pp"`
-	BetaCaroten      float64    `json:"beta_caroten"`
-	Category         *Category  `json:"category"`
-	NutritionPer100g Ingredient `json:"nutrition_per_100g"`
-	Unit             float64    `json:"unit"`
-	Grams            float64    `json:"grams"`
+	ID               uuid.UUID   `json:"id"`
+	Name             string      `json:"name"`
+	Description      *string     `json:"description"`
+	Removal          float64     `json:"removal"`
+	Kcal             float64     `json:"kcal"`
+	Protein          float64     `json:"protein"`
+	Lipits           float64     `json:"lipits"`
+	Glucids          float64     `json:"glucids"`
+	Canxi            float64     `json:"canxi"`
+	Phosphor         float64     `json:"phosphor"`
+	Fe               float64     `json:"fe"`
+	VitaminA         float64     `json:"vitamin_a"`
+	VitaminB1        float64     `json:"vitamin_b1"`
+	VitaminB2        float64     `json:"vitamin_b2"`
+	VitaminC         float64     `json:"vitamin_c"`
+	VitaminPp        float64     `json:"vitamin_pp"`
+	BetaCaroten      float64     `json:"beta_caroten"`
+	Category         *Category   `json:"category"`
+	NutritionPer100g *Ingredient `json:"nutrition_per_100g"`
+	Unit             float64     `json:"unit"`
+	Grams            float64     `json:"grams"`
 }
 
 type FilterParams struct {

@@ -70,8 +70,10 @@ func (r *DishRepository) GetDishByID(
 		ingredientModels[i] = &models.IngredientWithUnit{
 			ID:               ing.ID,
 			Name:             ing.Name,
+			Description:      ing.Description,
+			Removal:          ing.Removal,
 			Unit:             ing.Unit,
-			NutritionPer100g: nutritionPer100g,
+			NutritionPer100g: &nutritionPer100g,
 		}
 		category, err := r.db.GetCategoryById(ctx, ing.CategoryID)
 		if err != nil {
@@ -124,22 +126,45 @@ func (r *DishRepository) GetDishes(
 			return nil, err
 		}
 
-		ingredientModel := make([]*models.IngredientWithUnit, len(ingredients))
+		ingredientModels := make([]*models.IngredientWithUnit, len(ingredients))
 		for i, ing := range ingredients {
-			ingredientModel[i] = &models.IngredientWithUnit{
-				ID:   ing.ID,
-				Name: ing.Name,
-				Unit: ing.Unit,
+			nutritionPer100g := models.Ingredient{
+				ID:          ing.ID,
+				Name:        ing.Name,
+				Description: ing.Description,
+				Removal:     ing.Removal,
+				Kcal:        ing.Kcal,
+				Protein:     ing.Protein,
+				Lipits:      ing.Lipits,
+				Glucids:     ing.Glucids,
+				Canxi:       ing.Canxi,
+				Phosphor:    ing.Phosphor,
+				Fe:          ing.Fe,
+				VitaminA:    ing.VitaminA,
+				VitaminB1:   ing.VitaminB1,
+				VitaminB2:   ing.VitaminB2,
+				VitaminC:    ing.VitaminC,
+				BetaCaroten: ing.BetaCaroten,
+				VitaminPp:   ing.VitaminPp,
+			}
+
+			ingredientModels[i] = &models.IngredientWithUnit{
+				ID:               ing.ID,
+				Name:             ing.Name,
+				Description:      ing.Description,
+				Removal:          ing.Removal,
+				Unit:             ing.Unit,
+				NutritionPer100g: &nutritionPer100g,
 			}
 			category, err := r.db.GetCategoryById(ctx, ing.CategoryID)
 			if err != nil {
 				return nil, err
 			}
 
-			ingredientModel[i].Category = models.ToCategory(category)
+			ingredientModels[i].Category = models.ToCategory(category)
 		}
 
-		result[i].Ingredients = ingredientModel
+		result[i].Ingredients = ingredientModels
 		result[i] = result[i].CalculateNutritionalValues()
 	}
 
@@ -201,16 +226,45 @@ func (r *DishRepository) GetDishesByIngredientID(
 			return nil, err
 		}
 
-		ingredientModel := make([]*models.IngredientWithUnit, len(ingredients))
+		ingredientModels := make([]*models.IngredientWithUnit, len(ingredients))
 		for i, ing := range ingredients {
-			ingredientModel[i] = &models.IngredientWithUnit{
-				ID:   ing.ID,
-				Name: ing.Name,
-				Unit: ing.Unit,
+			nutritionPer100g := models.Ingredient{
+				ID:          ing.ID,
+				Name:        ing.Name,
+				Description: ing.Description,
+				Removal:     ing.Removal,
+				Kcal:        ing.Kcal,
+				Protein:     ing.Protein,
+				Lipits:      ing.Lipits,
+				Glucids:     ing.Glucids,
+				Canxi:       ing.Canxi,
+				Phosphor:    ing.Phosphor,
+				Fe:          ing.Fe,
+				VitaminA:    ing.VitaminA,
+				VitaminB1:   ing.VitaminB1,
+				VitaminB2:   ing.VitaminB2,
+				VitaminC:    ing.VitaminC,
+				BetaCaroten: ing.BetaCaroten,
+				VitaminPp:   ing.VitaminPp,
 			}
+
+			ingredientModels[i] = &models.IngredientWithUnit{
+				ID:               ing.ID,
+				Name:             ing.Name,
+				Description:      ing.Description,
+				Removal:          ing.Removal,
+				Unit:             ing.Unit,
+				NutritionPer100g: &nutritionPer100g,
+			}
+			category, err := r.db.GetCategoryById(ctx, ing.CategoryID)
+			if err != nil {
+				return nil, err
+			}
+
+			ingredientModels[i].Category = models.ToCategory(category)
 		}
 
-		result[i].Ingredients = ingredientModel
+		result[i].Ingredients = ingredientModels
 		result[i] = result[i].CalculateNutritionalValues()
 	}
 

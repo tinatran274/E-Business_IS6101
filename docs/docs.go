@@ -271,7 +271,7 @@ const docTemplate = `{
                 "tags": [
                     "dish"
                 ],
-                "summary": "GetDishByIngredientID",
+                "summary": "GetDishesByIngredientID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -614,8 +614,8 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "description": "Updated At",
-                        "name": "updated_at",
+                        "description": "Date",
+                        "name": "date",
                         "in": "query",
                         "required": true
                     }
@@ -677,6 +677,74 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.UpdateStatisticRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GeneralResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistic/{user_id}/range": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "get statistic by user id and date range",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistic"
+                ],
+                "summary": "Get statistic by user id and date range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Start date",
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "End date",
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {

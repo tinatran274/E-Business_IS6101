@@ -296,7 +296,7 @@ paths:
       security:
       - BasicAuth: []
       - Bearer: []
-      summary: GetDishByIngredientID
+      summary: GetDishesByIngredientID
       tags:
       - dish
   /dish/{id}/like:
@@ -465,10 +465,10 @@ paths:
         name: user_id
         required: true
         type: string
-      - description: Updated At
+      - description: Date
         format: date-time
         in: query
-        name: updated_at
+        name: date
         required: true
         type: string
       produces:
@@ -527,6 +527,50 @@ paths:
       - BasicAuth: []
       - Bearer: []
       summary: Update statistic by user id and date
+      tags:
+      - statistic
+  /statistic/{user_id}/range:
+    get:
+      consumes:
+      - application/json
+      description: get statistic by user id and date range
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Start date
+        format: date-time
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date
+        format: date-time
+        in: query
+        name: end_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get statistic by user id and date range
       tags:
       - statistic
   /user:

@@ -59,6 +59,51 @@ func (s *StatisticUseCase) GetStatisticByUserIdAndDate(
 	return statistic, nil
 }
 
+func (s *StatisticUseCase) GetStatisticByUserIdAndDateRange(
+	ctx context.Context,
+	userID uuid.UUID,
+	startDate time.Time,
+	endDate time.Time,
+) ([]*models.Statistic, error) {
+	statistic, err := s.statisticRepo.GetStatisticByUserIdAndDateRange(
+		ctx,
+		userID,
+		startDate,
+		endDate,
+	)
+	if err != nil {
+		return nil, response.NewInternalServerError(err)
+	}
+
+	statisticResult := make([]*models.Statistic, 0, len(statistic))
+	for date := startDate; !date.After(endDate); date = date.AddDate(0, 0, 1) {
+		var existingStatistic *models.Statistic
+		for _, stat := range statistic {
+			if stat.UpdatedAt.Equal(date) {
+				existingStatistic = stat
+				break
+			}
+		}
+
+		if existingStatistic == nil {
+			newStatistic := models.NewStatistic(
+				date,
+				userID,
+				0,
+				0,
+				0,
+				0,
+				0,
+			)
+			statisticResult = append(statisticResult, newStatistic)
+		} else {
+			statisticResult = append(statisticResult, existingStatistic)
+		}
+	}
+
+	return statisticResult, nil
+}
+
 func (s *StatisticUseCase) UpdateStatisticByUserIdAndDate(
 	ctx context.Context,
 	authInfo models.AuthenticationInfo,

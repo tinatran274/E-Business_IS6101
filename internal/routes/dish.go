@@ -28,4 +28,7 @@ func (r *DishRouter) Register(e *echo.Group) {
 
 	dishRoute.GET("", r.dishHandler.GetDishs)
 	dishRoute.GET("/:id", r.dishHandler.GetDishByID)
+	dishRoute.GET("/:id/ingredient", r.dishHandler.GetDishesByIngredientID)
+	dishRoute.POST("/:id/like", r.dishHandler.LikeDish)
+	dishRoute.POST("/:id/unlike", r.dishHandler.UnlikeDish)
 }

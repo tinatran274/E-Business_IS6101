@@ -68,6 +68,38 @@ func (r *StatisticRepository) GetStatisticByUserIdAndDate(
 	return models.ToStatistic(&statistic), nil
 }
 
+func (r *StatisticRepository) GetStatisticByUserIdAndDateRange(
+	ctx context.Context,
+	userID uuid.UUID,
+	startDate time.Time,
+	endDate time.Time,
+) ([]*models.Statistic, error) {
+	t := time.Now().UTC()
+	defer func() {
+		metrics.DbMetricsIns.DbSum.WithLabelValues("GetStatisticByUserIdAndDateRange").
+			Observe(time.Since(t).Seconds())
+	}()
+
+	statistic, err := r.db.GetStatisticByUserIdAndDateRange(
+		ctx,
+		db.GetStatisticByUserIdAndDateRangeParams{
+			UserID:    userID,
+			StartDate: startDate,
+			EndDate:   endDate,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	statisticModels := make([]*models.Statistic, len(statistic))
+	for i, s := range statistic {
+		statisticModels[i] = models.ToStatistic(&s)
+	}
+
+	return statisticModels, nil
+}
+
 func (r *StatisticRepository) UpdateStatisticByUserIdAndDate(
 	ctx context.Context,
 	statistic *models.Statistic,

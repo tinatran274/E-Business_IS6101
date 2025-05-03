@@ -123,6 +123,10 @@ func CalculateGrams(ingredient IngredientWithUnit) float64 {
 func GetIngredientDetails(ingredient IngredientWithUnit) *IngredientWithUnit {
 	grams := CalculateGrams(ingredient)
 	return &IngredientWithUnit{
+		ID:          ingredient.ID,
+		Name:        ingredient.Name,
+		Description: ingredient.Description,
+		Removal:     ingredient.Removal,
 		Grams:       grams,
 		Kcal:        grams * ingredient.NutritionPer100g.Kcal / 100,
 		Protein:     grams * ingredient.NutritionPer100g.Protein / 100,
@@ -142,8 +146,12 @@ func GetIngredientDetails(ingredient IngredientWithUnit) *IngredientWithUnit {
 }
 
 func (d *Dish) CalculateNutritionalValues() *Dish {
-	for i, recipe := range d.Ingredients {
-		ingredientDetail := GetIngredientDetails(*recipe)
+	if len(d.Ingredients) == 0 {
+		return d
+	}
+
+	for i, ingre := range d.Ingredients {
+		ingredientDetail := GetIngredientDetails(*ingre)
 		d.Ingredients[i] = ingredientDetail
 		d.Kcal += ingredientDetail.Kcal
 		d.Protein += ingredientDetail.Protein

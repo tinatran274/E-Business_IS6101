@@ -74,6 +74,45 @@ func (q *Queries) GetStatisticByUserIdAndDate(ctx context.Context, arg GetStatis
 	return i, err
 }
 
+const getStatisticByUserIdAndDateRange = `-- name: GetStatisticByUserIdAndDateRange :many
+SELECT updated_at, user_id, morning_calories, lunch_calories, dinner_calories, snack_calories, exercise_calories FROM statistics
+WHERE user_id = $1 AND updated_at BETWEEN $2::date AND $3::date
+`
+
+type GetStatisticByUserIdAndDateRangeParams struct {
+	UserID    uuid.UUID `json:"user_id"`
+	StartDate time.Time `json:"start_date"`
+	EndDate   time.Time `json:"end_date"`
+}
+
+func (q *Queries) GetStatisticByUserIdAndDateRange(ctx context.Context, arg GetStatisticByUserIdAndDateRangeParams) ([]Statistic, error) {
+	rows, err := q.db.Query(ctx, getStatisticByUserIdAndDateRange, arg.UserID, arg.StartDate, arg.EndDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Statistic
+	for rows.Next() {
+		var i Statistic
+		if err := rows.Scan(
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.MorningCalories,
+			&i.LunchCalories,
+			&i.DinnerCalories,
+			&i.SnackCalories,
+			&i.ExerciseCalories,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateStatisticByUserIdAndDate = `-- name: UpdateStatisticByUserIdAndDate :exec
 UPDATE statistics
 SET

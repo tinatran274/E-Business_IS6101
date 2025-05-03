@@ -15,6 +15,10 @@ INSERT INTO statistics (
 SELECT * FROM statistics
 WHERE user_id = $1 AND updated_at = $2;
 
+-- name: GetStatisticByUserIdAndDateRange :many
+SELECT * FROM statistics
+WHERE user_id = $1 AND updated_at BETWEEN @start_date::date AND @end_date::date;
+
 
 -- name: UpdateStatisticByUserIdAndDate :exec
 UPDATE statistics

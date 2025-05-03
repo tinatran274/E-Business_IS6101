@@ -18,6 +18,12 @@ type StatisticRepository interface {
 		userID uuid.UUID,
 		updatedAt time.Time,
 	) (*Statistic, error)
+	GetStatisticByUserIdAndDateRange(
+		ctx context.Context,
+		userID uuid.UUID,
+		startDate time.Time,
+		endDate time.Time,
+	) ([]*Statistic, error)
 	UpdateStatisticByUserIdAndDate(
 		ctx context.Context,
 		statistic *Statistic,
