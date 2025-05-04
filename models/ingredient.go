@@ -80,6 +80,7 @@ type IngredientWithUnit struct {
 }
 
 type FilterParams struct {
+	Status  string `query:"status"`
 	Limit   int32  `query:"limit"`
 	Offset  int32  `query:"offset"`
 	Keyword string `query:"keyword"`

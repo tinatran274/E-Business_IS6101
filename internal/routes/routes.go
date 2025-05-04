@@ -17,6 +17,9 @@ func NewRouter(
 	ingredientRouter *IngredientRouter,
 	dishRouter *DishRouter,
 	statisticRouter *StatisticRouter,
+	productRouter *ProductRouter,
+	productVariantRouter *ProductVariantRouter,
+	productCategoryRouter *ProductCategoryRouter,
 ) {
 	handler.Use(
 		middleware.CORSWithConfig(
@@ -63,4 +66,7 @@ func NewRouter(
 	ingredientRouter.Register(v1)
 	dishRouter.Register(v1)
 	statisticRouter.Register(v1)
+	productRouter.Register(v1)
+	productVariantRouter.Register(v1)
+	productCategoryRouter.Register(v1)
 }

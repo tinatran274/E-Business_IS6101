@@ -20,6 +20,78 @@ definitions:
       snack_calories:
         type: number
     type: object
+  models.CreateProductRequest:
+    properties:
+      brand:
+        type: string
+      category_id:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      origin:
+        type: string
+      product_variants:
+        items:
+          $ref: '#/definitions/models.CreateProductVariantInProductRequest'
+        type: array
+      user_guide:
+        type: string
+    type: object
+  models.CreateProductVariantInProductRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      retail_price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  models.CreateProductVariantRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      product_id:
+        type: string
+      retail_price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  models.ProductVariant:
+    properties:
+      color:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      deleted_at:
+        type: string
+      deleted_by:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      product_id:
+        type: string
+      retail_price:
+        type: number
+      status:
+        type: string
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: string
+    type: object
   models.UpdateUserRequest:
     properties:
       age:
@@ -454,6 +526,506 @@ paths:
       summary: Get ingredient by ID
       tags:
       - ingredient
+  /product:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of products with optional filters
+      parameters:
+      - description: Category ID (UUID)
+        in: query
+        name: category_id
+        type: string
+      - description: 'Product status, allowed: pending, active, rejected'
+        in: query
+        name: status
+        type: string
+      - description: Limit (1-100), default is 25
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Search keyword for name
+        in: query
+        name: keyword
+        type: string
+      - description: 'Sort direction: asc or desc'
+        in: query
+        name: sort_by
+        type: string
+      - description: 'Field to sort by, allowed: updated_at'
+        in: query
+        name: order_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get products
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product information
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      tags:
+      - product
+  /product-variant:
+    post:
+      consumes:
+      - application/json
+      description: Create a new product variant
+      parameters:
+      - description: Product variant data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateProductVariantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Create a new product variant
+      tags:
+      - product-variant
+  /product-variant/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product variant
+      parameters:
+      - description: Product variant ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Delete a product variant
+      tags:
+      - product-variant
+    put:
+      consumes:
+      - application/json
+      description: Update a product variant
+      parameters:
+      - description: Product variant ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product variant data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateProductVariantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ProductVariant'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Update a product variant
+      tags:
+      - product-variant
+  /product-variant/product/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get product variants by product ID
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get product variants by product ID
+      tags:
+      - product-variant
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product by id
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Delete product
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a product by its ID
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get product by ID
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update a product by its ID
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product information
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Update product
+      tags:
+      - product
+  /product/{id}/approve:
+    put:
+      consumes:
+      - application/json
+      description: Approve product by id
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Approve product
+  /product/{id}/reject:
+    put:
+      consumes:
+      - application/json
+      description: Reject product by id
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Reject product
+  /product/me:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of products created by the authenticated user
+      parameters:
+      - description: Category ID (UUID)
+        in: query
+        name: category_id
+        type: string
+      - description: 'Product status, allowed: pending, active, rejected'
+        in: query
+        name: status
+        type: string
+      - description: Limit (1-100), default is 25
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Search keyword for name
+        in: query
+        name: keyword
+        type: string
+      - description: 'Sort direction: asc or desc'
+        in: query
+        name: sort_by
+        type: string
+      - description: 'Field to sort by, allowed: updated_at'
+        in: query
+        name: order_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GeneralResponse'
+      security:
+      - BasicAuth: []
+      - Bearer: []
+      summary: Get my products
+      tags:
+      - product
   /statistic/{user_id}:
     get:
       consumes:

@@ -60,18 +60,36 @@ func (s *Server) Start() {
 	dishRepo := repositories.NewDishRepository(q)
 	favoriteRepo := repositories.NewFavoriteRepository(q)
 	statisticRepo := repositories.NewStatisticRepository(q)
+	productRepo := repositories.NewProductRepository(q)
+	productVariantRepo := repositories.NewProductVariantRepository(q)
+	productCategoryRepo := repositories.NewProductCategoryRepository(q)
 
 	userUseCase := usecases.NewUserUseCase(userRepo, accountRepo)
 	authUseCase := usecases.NewAuthUseCase(accountRepo, userRepo)
 	ingredientUseCase := usecases.NewIngredientUseCase(ingredientRepo)
 	dishUseCase := usecases.NewDishUseCase(dishRepo, favoriteRepo)
 	statisticUseCase := usecases.NewStatisticUseCase(statisticRepo)
+	productUseCase := usecases.NewProductUseCase(
+		productRepo,
+		productVariantRepo,
+		productCategoryRepo,
+	)
+	productVariantUseCase := usecases.NewProductVariantUseCase(
+		productVariantRepo,
+		productRepo,
+	)
+	productCategoryUseCase := usecases.NewProductCategoryUseCase(productCategoryRepo)
 
 	authHandler := handlers.NewAuthHandler(userUseCase, authUseCase)
 	userHandler := handlers.NewUserHanlder(userUseCase)
 	ingredientHandler := handlers.NewIngredientHandler(ingredientUseCase)
 	dishHandler := handlers.NewDishHandler(dishUseCase)
 	statisticHandler := handlers.NewStatisticHandler(statisticUseCase)
+	productHandler := handlers.NewProductHandler(productUseCase)
+	productVariantHandler := handlers.NewProductVariantHandler(productVariantUseCase)
+	productCategoryHandler := handlers.NewProductCategoryHandler(
+		productCategoryUseCase,
+	)
 
 	authMiddleware := middlewares.JWTAuthMiddleware(
 		[]byte(s.config.JwtSecret),
@@ -91,6 +109,18 @@ func (s *Server) Start() {
 		statisticHandler,
 		authMiddleware,
 	)
+	productRouter := routes.NewProductRouter(
+		productHandler,
+		authMiddleware,
+	)
+	productVariantRouter := routes.NewProductVariantRouter(
+		productVariantHandler,
+		authMiddleware,
+	)
+	productCategoryRouter := routes.NewProductCategoryRouter(
+		productCategoryHandler,
+		authMiddleware,
+	)
 
 	routes.NewRouter(
 		s.server,
@@ -99,6 +129,9 @@ func (s *Server) Start() {
 		ingredientRouter,
 		dishRouter,
 		statisticRouter,
+		productRouter,
+		productVariantRouter,
+		productCategoryRouter,
 	)
 
 	s.configLogger()

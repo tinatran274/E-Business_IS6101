@@ -57,6 +57,20 @@ type Favorite struct {
 	Value  int32     `json:"value"`
 }
 
+type File struct {
+	ID         uuid.UUID  `json:"id"`
+	BelongToID uuid.UUID  `json:"belong_to_id"`
+	FilePath   string     `json:"file_path"`
+	FileType   string     `json:"file_type"`
+	Status     string     `json:"status"`
+	CreatedAt  time.Time  `json:"created_at"`
+	CreatedBy  *uuid.UUID `json:"created_by"`
+	UpdatedAt  time.Time  `json:"updated_at"`
+	UpdatedBy  *uuid.UUID `json:"updated_by"`
+	DeletedAt  *time.Time `json:"deleted_at"`
+	DeletedBy  *uuid.UUID `json:"deleted_by"`
+}
+
 type Ingredient struct {
 	ID          uuid.UUID  `json:"id"`
 	Name        string     `json:"name"`
@@ -76,6 +90,52 @@ type Ingredient struct {
 	VitaminPp   float64    `json:"vitamin_pp"`
 	BetaCaroten float64    `json:"beta_caroten"`
 	CategoryID  uuid.UUID  `json:"category_id"`
+	Status      string     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
+	CreatedBy   *uuid.UUID `json:"created_by"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	UpdatedBy   *uuid.UUID `json:"updated_by"`
+	DeletedAt   *time.Time `json:"deleted_at"`
+	DeletedBy   *uuid.UUID `json:"deleted_by"`
+}
+
+type Product struct {
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
+	Brand       *string    `json:"brand"`
+	Origin      *string    `json:"origin"`
+	UserGuide   *string    `json:"user_guide"`
+	CategoryID  uuid.UUID  `json:"category_id"`
+	Status      string     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
+	CreatedBy   *uuid.UUID `json:"created_by"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	UpdatedBy   *uuid.UUID `json:"updated_by"`
+	DeletedAt   *time.Time `json:"deleted_at"`
+	DeletedBy   *uuid.UUID `json:"deleted_by"`
+}
+
+type ProductCategory struct {
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
+	Status      string     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
+	CreatedBy   *uuid.UUID `json:"created_by"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	UpdatedBy   *uuid.UUID `json:"updated_by"`
+	DeletedAt   *time.Time `json:"deleted_at"`
+	DeletedBy   *uuid.UUID `json:"deleted_by"`
+}
+
+type ProductVariant struct {
+	ID          uuid.UUID  `json:"id"`
+	ProductID   uuid.UUID  `json:"product_id"`
+	Description *string    `json:"description"`
+	Color       string     `json:"color"`
+	RetailPrice float64    `json:"retail_price"`
+	Stock       int32      `json:"stock"`
 	Status      string     `json:"status"`
 	CreatedAt   time.Time  `json:"created_at"`
 	CreatedBy   *uuid.UUID `json:"created_by"`

@@ -185,17 +185,17 @@ func (h *UserHandler) Update(ctx echo.Context) error {
 	}
 
 	payload.FirstName = strings.TrimSpace(payload.FirstName)
-	if len(payload.FirstName) > models.LimitNameLength {
+	if len(payload.FirstName) > models.LimitTextLength {
 		return response.ResponseError(ctx, response.NewBadRequestError("First name is too long."))
 	}
 
 	payload.LastName = strings.TrimSpace(payload.LastName)
-	if len(payload.LastName) > models.LimitNameLength {
+	if len(payload.LastName) > models.LimitTextLength {
 		return response.ResponseError(ctx, response.NewBadRequestError("Last name is too long."))
 	}
 
 	payload.Username = strings.TrimSpace(payload.Username)
-	if len(payload.Username) > models.LimitNameLength {
+	if len(payload.Username) > models.LimitTextLength {
 		return response.ResponseError(ctx, response.NewBadRequestError("Username is too long."))
 	}
 

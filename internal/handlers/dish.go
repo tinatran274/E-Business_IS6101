@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/usecases"
@@ -64,6 +65,16 @@ func (h *DishHandler) GetDishs(ctx echo.Context) error {
 
 	if params.Offset < 0 {
 		params.Offset = 0
+	}
+
+	params.Keyword = strings.TrimSpace(params.Keyword)
+	if len(params.Keyword) > 0 {
+		if len(params.Keyword) > models.LimitTextLength {
+			return response.ResponseError(
+				ctx,
+				response.NewBadRequestError("Keyword is too long."),
+			)
+		}
 	}
 
 	_, ok := models.ValidSortBy[params.SortBy]
@@ -167,6 +178,16 @@ func (h *DishHandler) GetDishesByIngredientID(ctx echo.Context) error {
 		params.Offset = 0
 	}
 
+	params.Keyword = strings.TrimSpace(params.Keyword)
+	if len(params.Keyword) > 0 {
+		if len(params.Keyword) > models.LimitTextLength {
+			return response.ResponseError(
+				ctx,
+				response.NewBadRequestError("Keyword is too long."),
+			)
+		}
+	}
+
 	_, ok := models.ValidSortBy[params.SortBy]
 	if !ok {
 		params.SortBy = models.SortByDefault
@@ -214,7 +235,7 @@ func (h *DishHandler) LikeDish(ctx echo.Context) error {
 
 	authInfo, ok := ctx.Get(models.AuthInfoKey).(models.AuthenticationInfo)
 	if !ok {
-		return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "unauthorized")
+		return response.ResponseFailMessage(ctx, http.StatusUnauthorized, "Unauthorized.")
 	}
 
 	idParam := ctx.Param("id")

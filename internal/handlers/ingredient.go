@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"10.0.0.50/tuan.quang.tran/aioz-ads/internal/usecases"
@@ -64,6 +65,16 @@ func (h *IngredientHandler) GetIngredients(ctx echo.Context) error {
 
 	if params.Offset < 0 {
 		params.Offset = 0
+	}
+
+	params.Keyword = strings.TrimSpace(params.Keyword)
+	if len(params.Keyword) > 0 {
+		if len(params.Keyword) > models.LimitTextLength {
+			return response.ResponseError(
+				ctx,
+				response.NewBadRequestError("Keyword is too long."),
+			)
+		}
 	}
 
 	_, ok := models.ValidSortBy[params.SortBy]

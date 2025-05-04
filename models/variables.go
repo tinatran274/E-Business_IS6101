@@ -1,9 +1,18 @@
 package models
 
 var (
+	PendingStatus  string = "pending"
+	RejectedStatus string = "rejected"
 	ActiveStatus   string = "active"
 	InactiveStatus string = "inactive"
 	DeletedStatus  string = "deleted"
+
+	ValidStatus = map[string]bool{
+		PendingStatus:  true,
+		RejectedStatus: true,
+		ActiveStatus:   true,
+		InactiveStatus: true,
+	}
 
 	GenderMap = map[string]bool{
 		"male":   true,
@@ -30,14 +39,19 @@ var (
 	DefaultExerciseLevel string = "no exercise"
 	DefaultAim           string = "maintain weight"
 
-	LimitNameLength int     = 20
-	MinAge          int     = 18
-	MaxAge          int     = 100
-	MinHeight       int     = 140
-	MaxHeight       int     = 220
-	MinWeight       int     = 30
-	MaxWeight       int     = 200
-	LimitCalories   float64 = 1000
+	MinAge        int     = 18
+	MaxAge        int     = 100
+	MinHeight     int     = 140
+	MaxHeight     int     = 220
+	MinWeight     int     = 30
+	MaxWeight     int     = 200
+	LimitCalories float64 = 1000
+
+	LimitTextLength     int = 40
+	LimitLongTextLength int = 100
+	LimitImageSize      int = 5 * 1024 * 1024 // 5MB
+	LimitImageWidth     int = 2000
+	LimitImageHeight    int = 2000
 
 	ValidOrderBy = map[string]bool{
 		"updated_at": true,
