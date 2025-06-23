@@ -65,7 +65,7 @@ func (o *OrderUseCase) CreateOrder(
 		orderRequest.ReceiverPhone,
 		orderRequest.ReceiverAddress,
 		models.DefaultShippingCost,
-		orderRequest.PaymentMethodID,
+		paymentMethod.ID,
 		&authInfo.User.ID,
 	)
 	orderItems := make([]*models.OrderItem, 0, len(orderRequest.OrderItems))
