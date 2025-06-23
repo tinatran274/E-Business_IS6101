@@ -20,6 +20,9 @@ func NewRouter(
 	productRouter *ProductRouter,
 	productVariantRouter *ProductVariantRouter,
 	productCategoryRouter *ProductCategoryRouter,
+	cartRouter *CartRouter,
+	paymentMethodRouter *PaymentMethodRouter,
+	orderRouter *OrderRouter,
 ) {
 	handler.Use(
 		middleware.CORSWithConfig(
@@ -69,4 +72,7 @@ func NewRouter(
 	productRouter.Register(v1)
 	productVariantRouter.Register(v1)
 	productCategoryRouter.Register(v1)
+	cartRouter.Register(v1)
+	paymentMethodRouter.Register(v1)
+	orderRouter.Register(v1)
 }

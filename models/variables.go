@@ -32,12 +32,13 @@ var (
 		"gain weight":     true,
 	}
 
-	DefaultAge           int32  = 18
-	DefaultHeight        int32  = 160
-	DefaultWeight        int32  = 50
-	DefaultGender        string = "female"
-	DefaultExerciseLevel string = "no exercise"
-	DefaultAim           string = "maintain weight"
+	DefaultAge           int32   = 18
+	DefaultHeight        int32   = 160
+	DefaultWeight        int32   = 50
+	DefaultGender        string  = "female"
+	DefaultExerciseLevel string  = "no exercise"
+	DefaultAim           string  = "maintain weight"
+	DefaultShippingCost  float64 = 30000
 
 	MinAge        int     = 18
 	MaxAge        int     = 100

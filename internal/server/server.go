@@ -63,6 +63,10 @@ func (s *Server) Start() {
 	productRepo := repositories.NewProductRepository(q)
 	productVariantRepo := repositories.NewProductVariantRepository(q)
 	productCategoryRepo := repositories.NewProductCategoryRepository(q)
+	cartRepo := repositories.NewCartRepository(q)
+	paymentMethodRepo := repositories.NewPaymentMethodRepository(q)
+	orderRepo := repositories.NewOrderRepository(q)
+	orderItemRepo := repositories.NewOrderItemRepository(q)
 
 	userUseCase := usecases.NewUserUseCase(userRepo, accountRepo)
 	authUseCase := usecases.NewAuthUseCase(accountRepo, userRepo)
@@ -79,6 +83,15 @@ func (s *Server) Start() {
 		productRepo,
 	)
 	productCategoryUseCase := usecases.NewProductCategoryUseCase(productCategoryRepo)
+	cartUseCase := usecases.NewCartUseCase(cartRepo)
+	paymentMethodUseCase := usecases.NewPaymentMethodUseCase(paymentMethodRepo)
+	orderUseCase := usecases.NewOrderUseCase(
+		orderRepo,
+		orderItemRepo,
+		cartRepo,
+		paymentMethodRepo,
+		productVariantRepo,
+	)
 
 	authHandler := handlers.NewAuthHandler(userUseCase, authUseCase)
 	userHandler := handlers.NewUserHanlder(userUseCase)
@@ -90,6 +103,11 @@ func (s *Server) Start() {
 	productCategoryHandler := handlers.NewProductCategoryHandler(
 		productCategoryUseCase,
 	)
+	cartHandler := handlers.NewCartHandler(cartUseCase)
+	paymentMethodHandler := handlers.NewPaymentMethodHandler(
+		paymentMethodUseCase,
+	)
+	orderHandler := handlers.NewOrderHandler(orderUseCase)
 
 	authMiddleware := middlewares.JWTAuthMiddleware(
 		[]byte(s.config.JwtSecret),
@@ -121,6 +139,12 @@ func (s *Server) Start() {
 		productCategoryHandler,
 		authMiddleware,
 	)
+	cartRouter := routes.NewCartRouter(cartHandler, authMiddleware)
+	paymentMethodRouter := routes.NewPaymentMethodRouter(
+		paymentMethodHandler,
+		authMiddleware,
+	)
+	orderRouter := routes.NewOrderRouter(orderHandler, authMiddleware)
 
 	routes.NewRouter(
 		s.server,
@@ -132,6 +156,9 @@ func (s *Server) Start() {
 		productRouter,
 		productVariantRouter,
 		productCategoryRouter,
+		cartRouter,
+		paymentMethodRouter,
+		orderRouter,
 	)
 
 	s.configLogger()

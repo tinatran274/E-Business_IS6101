@@ -216,19 +216,19 @@ func (h *ProductHandler) CreateProduct(ctx echo.Context) error {
 	return response.ResponseSuccess(ctx, http.StatusCreated, product)
 }
 
-// @Summary		Get product by ID
-// @Description	Retrieve a product by its ID
-// @Tags			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			id	path		string	true	"Product ID (UUID)"
-// @Success		200	{object}	response.GeneralResponse
-// @Failure		400	{object}	response.GeneralResponse
-// @Failure		404	{object}	response.GeneralResponse
-// @Failure		500	{object}	response.GeneralResponse
-// @Router			/product/{id} [get]
+//	@Summary		Get product by ID
+//	@Description	Retrieve a product by its ID
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Product ID (UUID)"
+//	@Success		200	{object}	response.GeneralResponse
+//	@Failure		400	{object}	response.GeneralResponse
+//	@Failure		404	{object}	response.GeneralResponse
+//	@Failure		500	{object}	response.GeneralResponse
+//	@Router			/product/{id} [get]
 func (h *ProductHandler) GetProductByID(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -262,24 +262,24 @@ type ProductResponse struct {
 	Total    int               `json:"total"`
 }
 
-// @Summary		Get products
-// @Description	Retrieve a list of products with optional filters
-// @Tags			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			category_id	query		string	false	"Category ID (UUID)"
-// @Param			status		query		string	false	"Product status, allowed: pending, active, rejected"
-// @Param			limit		query		int		false	"Limit (1-100), default is 25"
-// @Param			offset		query		int		false	"Offset for pagination"
-// @Param			keyword		query		string	false	"Search keyword for name"
-// @Param			sort_by		query		string	false	"Sort direction: asc or desc"
-// @Param			order_by	query		string	false	"Field to sort by, allowed: updated_at"
-// @Success		200			{object}	response.GeneralResponse
-// @Failure		400			{object}	response.GeneralResponse
-// @Failure		500			{object}	response.GeneralResponse
-// @Router			/product [get]
+//	@Summary		Get products
+//	@Description	Retrieve a list of products with optional filters
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			category_id	query		string	false	"Category ID (UUID)"
+//	@Param			status		query		string	false	"Product status, allowed: pending, active, rejected"
+//	@Param			limit		query		int		false	"Limit (1-100), default is 25"
+//	@Param			offset		query		int		false	"Offset for pagination"
+//	@Param			keyword		query		string	false	"Search keyword for name"
+//	@Param			sort_by		query		string	false	"Sort direction: asc or desc"
+//	@Param			order_by	query		string	false	"Field to sort by, allowed: updated_at"
+//	@Success		200			{object}	response.GeneralResponse
+//	@Failure		400			{object}	response.GeneralResponse
+//	@Failure		500			{object}	response.GeneralResponse
+//	@Router			/product [get]
 func (h *ProductHandler) GetProducts(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -367,24 +367,24 @@ func (h *ProductHandler) GetProducts(ctx echo.Context) error {
 	)
 }
 
-// @Summary		Get my products
-// @Description	Retrieve a list of products created by the authenticated user
-// @Tags			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			category_id	query		string	false	"Category ID (UUID)"
-// @Param			status		query		string	false	"Product status, allowed: pending, active, rejected"
-// @Param			limit		query		int		false	"Limit (1-100), default is 25"
-// @Param			offset		query		int		false	"Offset for pagination"
-// @Param			keyword		query		string	false	"Search keyword for name"
-// @Param			sort_by		query		string	false	"Sort direction: asc or desc"
-// @Param			order_by	query		string	false	"Field to sort by, allowed: updated_at"
-// @Success		200			{object}	response.GeneralResponse
-// @Failure		400			{object}	response.GeneralResponse
-// @Failure		500			{object}	response.GeneralResponse
-// @Router			/product/me [get]
+//	@Summary		Get my products
+//	@Description	Retrieve a list of products created by the authenticated user
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			category_id	query		string	false	"Category ID (UUID)"
+//	@Param			status		query		string	false	"Product status, allowed: pending, active, rejected"
+//	@Param			limit		query		int		false	"Limit (1-100), default is 25"
+//	@Param			offset		query		int		false	"Offset for pagination"
+//	@Param			keyword		query		string	false	"Search keyword for name"
+//	@Param			sort_by		query		string	false	"Sort direction: asc or desc"
+//	@Param			order_by	query		string	false	"Field to sort by, allowed: updated_at"
+//	@Success		200			{object}	response.GeneralResponse
+//	@Failure		400			{object}	response.GeneralResponse
+//	@Failure		500			{object}	response.GeneralResponse
+//	@Router			/product/me [get]
 func (h *ProductHandler) GetMyProducts(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -478,20 +478,20 @@ func (h *ProductHandler) GetMyProducts(ctx echo.Context) error {
 	)
 }
 
-// @Summary		Update product
-// @Description	Update a product by its ID
-// @Tags			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			id		path		string						true	"Product ID (UUID)"
-// @Param			product	body		models.CreateProductRequest	true	"Product information"
-// @Success		200		{object}	response.GeneralResponse
-// @Failure		400		{object}	response.GeneralResponse
-// @Failure		404		{object}	response.GeneralResponse
-// @Failure		500		{object}	response.GeneralResponse
-// @Router			/product/{id} [put]
+//	@Summary		Update product
+//	@Description	Update a product by its ID
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"Product ID (UUID)"
+//	@Param			product	body		models.CreateProductRequest	true	"Product information"
+//	@Success		200		{object}	response.GeneralResponse
+//	@Failure		400		{object}	response.GeneralResponse
+//	@Failure		404		{object}	response.GeneralResponse
+//	@Failure		500		{object}	response.GeneralResponse
+//	@Router			/product/{id} [put]
 func (h *ProductHandler) UpdateProduct(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -688,19 +688,19 @@ func (h *ProductHandler) UpdateProduct(ctx echo.Context) error {
 	return response.ResponseSuccess(ctx, http.StatusOK, product)
 }
 
-// @Summary		Delete product
-// @Description	Delete product by id
-// @Tag			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			id	path		string	true	"Product ID (UUID)"
-// @Success		200	{object}	response.GeneralResponse
-// @Failure		400	{object}	response.GeneralResponse
-// @Failure		404	{object}	response.GeneralResponse
-// @Failure		500	{object}	response.GeneralResponse
-// @Router			/product/{id} [delete]
+//	@Summary		Delete product
+//	@Description	Delete a product by its ID
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Product ID (UUID)"
+//	@Success		200	{object}	response.GeneralResponse
+//	@Failure		400	{object}	response.GeneralResponse
+//	@Failure		404	{object}	response.GeneralResponse
+//	@Failure		500	{object}	response.GeneralResponse
+//	@Router			/product/{id} [delete]
 func (h *ProductHandler) DeleteProduct(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -735,19 +735,19 @@ func (h *ProductHandler) DeleteProduct(ctx echo.Context) error {
 	return response.ResponseSuccess(ctx, http.StatusOK, nil)
 }
 
-// @Summary		Approve product
-// @Description	Approve product by id
-// @Tag			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			id	path		string	true	"Product ID (UUID)"
-// @Success		200	{object}	response.GeneralResponse
-// @Failure		400	{object}	response.GeneralResponse
-// @Failure		404	{object}	response.GeneralResponse
-// @Failure		500	{object}	response.GeneralResponse
-// @Router			/product/{id}/approve [put]
+//	@Summary		Approve product
+//	@Description	Approve product by id
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Product ID (UUID)"
+//	@Success		200	{object}	response.GeneralResponse
+//	@Failure		400	{object}	response.GeneralResponse
+//	@Failure		404	{object}	response.GeneralResponse
+//	@Failure		500	{object}	response.GeneralResponse
+//	@Router			/product/{id}/approve [put]
 func (h *ProductHandler) ApproveProduct(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {
@@ -782,19 +782,19 @@ func (h *ProductHandler) ApproveProduct(ctx echo.Context) error {
 	return response.ResponseSuccess(ctx, http.StatusOK, nil)
 }
 
-// @Summary		Reject product
-// @Description	Reject product by id
-// @Tag			product
-// @Security		BasicAuth
-// @Security		Bearer
-// @Accept			json
-// @Produce		json
-// @Param			id	path		string	true	"Product ID (UUID)"
-// @Success		200	{object}	response.GeneralResponse
-// @Failure		400	{object}	response.GeneralResponse
-// @Failure		404	{object}	response.GeneralResponse
-// @Failure		500	{object}	response.GeneralResponse
-// @Router			/product/{id}/reject [put]
+//	@Summary		Reject product
+//	@Description	Reject product by id
+//	@Tags			product
+//	@Security		BasicAuth
+//	@Security		Bearer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Product ID (UUID)"
+//	@Success		200	{object}	response.GeneralResponse
+//	@Failure		400	{object}	response.GeneralResponse
+//	@Failure		404	{object}	response.GeneralResponse
+//	@Failure		500	{object}	response.GeneralResponse
+//	@Router			/product/{id}/reject [put]
 func (h *ProductHandler) RejectProduct(ctx echo.Context) error {
 	t := time.Now().UTC()
 	defer func() {

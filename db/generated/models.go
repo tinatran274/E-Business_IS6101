@@ -24,6 +24,12 @@ type Account struct {
 	DeletedBy *uuid.UUID `json:"deleted_by"`
 }
 
+type Cart struct {
+	UserID           uuid.UUID `json:"user_id"`
+	ProductVariantID uuid.UUID `json:"product_variant_id"`
+	Quantity         int32     `json:"quantity"`
+}
+
 type Category struct {
 	ID          uuid.UUID  `json:"id"`
 	Name        string     `json:"name"`
@@ -90,6 +96,46 @@ type Ingredient struct {
 	VitaminPp   float64    `json:"vitamin_pp"`
 	BetaCaroten float64    `json:"beta_caroten"`
 	CategoryID  uuid.UUID  `json:"category_id"`
+	Status      string     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
+	CreatedBy   *uuid.UUID `json:"created_by"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	UpdatedBy   *uuid.UUID `json:"updated_by"`
+	DeletedAt   *time.Time `json:"deleted_at"`
+	DeletedBy   *uuid.UUID `json:"deleted_by"`
+}
+
+type Order struct {
+	ID              uuid.UUID  `json:"id"`
+	UserID          uuid.UUID  `json:"user_id"`
+	OrderDate       time.Time  `json:"order_date"`
+	ReceiverName    string     `json:"receiver_name"`
+	ReceiverPhone   string     `json:"receiver_phone"`
+	ReceiverAddress string     `json:"receiver_address"`
+	ShippingCost    float64    `json:"shipping_cost"`
+	PaymentMethodID uuid.UUID  `json:"payment_method_id"`
+	PaymentStatus   string     `json:"payment_status"`
+	ShippingStatus  string     `json:"shipping_status"`
+	OrderStatus     string     `json:"order_status"`
+	CreatedAt       time.Time  `json:"created_at"`
+	CreatedBy       *uuid.UUID `json:"created_by"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	UpdatedBy       *uuid.UUID `json:"updated_by"`
+	DeletedAt       *time.Time `json:"deleted_at"`
+	DeletedBy       *uuid.UUID `json:"deleted_by"`
+}
+
+type OrderItem struct {
+	OrderID          uuid.UUID `json:"order_id"`
+	ProductVariantID uuid.UUID `json:"product_variant_id"`
+	Quantity         int32     `json:"quantity"`
+	RetailPrice      float64   `json:"retail_price"`
+}
+
+type PaymentMethod struct {
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
 	Status      string     `json:"status"`
 	CreatedAt   time.Time  `json:"created_at"`
 	CreatedBy   *uuid.UUID `json:"created_by"`
